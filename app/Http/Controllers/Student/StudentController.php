@@ -1,0 +1,200 @@
+<?php
+
+namespace App\Http\Controllers\Student;
+
+use App\Models\Exam;
+use Inertia\Inertia;
+use App\Models\Batch;
+use App\Models\Result;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Validation\ValidationException;
+
+class StudentController extends Controller
+{
+    public function showBatch()
+    { 
+        $batch = Auth::user()->batches->first();
+        
+        return Inertia::render('Student/Batch/Show', [
+            'batch' => function() use ($batch) {
+                if(!$batch) {
+                    return null;
+                }
+                return [
+                    'name' => $batch->name,
+                    'is_batch_approved' => $batch->pivot->is_active
+                ];
+            }
+        ]);
+    }
+
+    public function batchRequest(Request $request)
+    {
+        $request->validateWithBag('requestBatch', [
+            'batch_code' => ['required', 'string', 'min:8']
+        ]);
+
+        $batch = Batch::where('batch_id', $request->batch_code)->first();
+
+        if (! $batch) {
+            throw ValidationException::withMessages([
+                'batch_code' => [__('The batch code provided by you is incorrect. Please, check again.')],
+            ])->errorBag('requestBatch');
+        }
+
+        $request->user()->batches()->attach($batch->id);
+        return back();
+    }
+
+    public function showCurrentExam()
+    {
+        $batch = Auth::user()->batches->first();
+        $exam = Exam::whereBatchId($batch ? $batch['id'] :  null)
+                ->whereStatus('published')
+                // ->whereExamDate(Carbon::now()->format('Y-m-d'))
+                // ->whereTime('exam_start', '<=', Carbon::now()->format('H:i:s'))
+                // ->whereTime('exam_end', '>=', Carbon::now()->format('H:i:s'))
+                ->latest()
+                ->first(['id', 'exam_id', 'name', 'exam_type', 'exam_date', 'exam_start', 'exam_end']);
+        
+
+        return Inertia::render('Student/Exam/ExamCenter', [
+            'exam' => function() use ($exam) {
+                if(!$exam) {
+                    return;
+                }
+
+                return [
+                    'id' => $exam->id,
+                    'exam_id' => $exam->exam_id,
+                    'exam_type' => $exam->exam_type,
+                    'name' => $exam->name,
+                    'exam_date' => Carbon::create($exam->exam_date)->format('d/m/Y'),
+                    'exam_start' => Carbon::create($exam->exam_start)->format('g:i a'),
+                    'exam_end' => Carbon::create($exam->exam_end)->format('g:i a'),
+                ];
+            }
+        ]);
+    }
+
+    public function takeExam(Exam $exam)
+    {
+        return Inertia::render('Student/Exam/TakeExam', [
+            'exam' => [
+                'id' => $exam->id,
+                'exam_id' => $exam->exam_id,
+                'exam_type' => $exam->exam_type,
+                'name' => $exam->name,
+                'total_question' => $exam->total_question,
+                'duration' => $exam->duration,
+                'exam_date' => Carbon::create($exam->exam_date)->format('d/m/Y'),
+                'exam_start' => Carbon::create($exam->exam_start)->format('g:i a'),
+                'exam_end' => Carbon::create($exam->exam_end)->format('g:i a'),
+                'questions' => $exam->questions()->get()->map(function($question) {
+                    return [
+                        'id' => $question->id,
+                        'question' => $question->question,
+                        'options' => [
+                            'a' => $question->option_a,
+                            'b' => $question->option_b,
+                            'c' => $question->option_c,
+                            'd' => $question->option_d,
+                        ],
+                        'answer' => $question->answer  
+                    ];
+                }),
+            ]
+        ]);
+    }
+
+    public function finishExam(Exam $exam, Request $request)
+    {
+        // get the result data
+        $questions = $exam->questions()->get();
+        // $questions = $exam->questions()->get()->map->only('id','question', 'option_a', 'option_b', 'option_c', 'option_d', 'answer');
+        $answerSheet = collect($request->answerSheet);
+
+        $totalAnswered = 0;
+        $correctAnswer = 0;
+        $wrongAnswer = 0;
+        $negetiveMark = 0;
+        $questionData = [];
+
+        // evaluating result
+        if($answerSheet->count()) {
+            foreach ($questions as $question) {
+                $answer = $answerSheet->firstWhere('id', $question->id);
+
+                if($answer) {
+                    if($question->answer === $answer['answer']) {
+                        $correctAnswer += 1;
+                    }else {
+                        $wrongAnswer += 1;
+                    }
+
+                    $totalAnswered += 1;
+                }
+
+                $questionData[] = [
+                    'question' => $question->question,
+                    'options' => [
+                        'a' => $question->option_a,
+                        'b' => $question->option_b,
+                        'c' => $question->option_c,
+                        'd' => $question->option_d,
+                    ],
+                    'answer' => $question->answer,
+                    'selectedAnswer' => $answer ? $answer['answer'] : null
+                ];
+            };
+        }
+
+        // negetive mark
+        if($exam->has_negetive_mark) {
+            $negetiveMark = $wrongAnswer * $exam->negetive_mark;
+        }
+
+        // total result
+        $totalMark = ($correctAnswer - $wrongAnswer) - $negetiveMark;
+        $examDuration = '00.5.00';
+        // storing result
+       
+        $result = Result::create([
+            'result_id' => Str::random(10),
+            'user_id' => Auth::id(),
+            'exam_id' => $exam->id,
+            'exam_type' => $exam->exam_type,
+            'exam_name' => $exam->name,
+            'total_question' => $exam->total_question,
+            'total_answered' => $totalAnswered,
+            'correct_answer' => $correctAnswer,
+            'wrong_answer' => $wrongAnswer,
+            'total_mark' => $totalMark,
+            'exam_duration' => $examDuration,
+            'exam_meta_data' => $questionData
+        ]);
+
+        return Redirect::route('app.exams.result-summary', $result->result_id);
+    }
+
+    public function showResultSummary(Result $result)
+    {
+        return Inertia::render('Student/Exam/ResultSummary', [
+            'result' => [
+                'id' => $result->id,
+                'result_id' => $result->result_id,
+                'exam_type' => $result->exam_type,
+                'exam_name' => $result->exam_name,
+                'total_question' => $result->total_question,
+                'correct_answer' => $result->correct_answer,
+                'wrong_answer' => $result->wrong_answer,
+                'total_mark' => $result->total_mark
+            ]
+        ]);
+    }
+}
