@@ -2,8 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExamController;
-use App\Http\Controllers\BatchController;
 use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\Admin\BatchController;
+use App\Http\Controllers\Admin\ResultController;
+use App\Http\Controllers\Admin\StudentController;
 /*
 |--------------------------------------------------------------------------
 | admin Routes
@@ -15,9 +17,7 @@ use App\Http\Controllers\QuestionController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::redirect('/', '/admin/dashboard');
 
 // admin
 Route::middleware(['auth:sanctum', 'verified'])->group(function() {
@@ -36,7 +36,13 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function() {
 
     // students
 
-    Route::get('/batches/{batch}/students', [BatchController::class, 'showStudents'])->name('batches.students.index');
+    Route::get('/batches/{batch:batch_id}/students', [StudentController::class, 'index'])->name('students.index');
+    Route::post('/students/{student}/approval', [StudentController::class, 'approveStudent'])->name('students.approval');
+
+    // results 
+    Route::get('batches/{exam:exam_id}/results', [ResultController::class, 'index'])->name('results.index');
+    Route::get('results/{result:result_id}', [ResultController::class, 'show'])->name('results.show');
+    Route::post('/publish-result/{exam:exam_id}', [ResultController::class, 'publishResult'])->name('results.publish-result');
 
     // exams
     Route::get('/batches/{batch:batch_id}/exams', [ExamController::class, 'index'])->name('exams.index');

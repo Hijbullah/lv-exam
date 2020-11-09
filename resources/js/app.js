@@ -6,6 +6,7 @@ import { InertiaApp } from '@inertiajs/inertia-vue';
 import { InertiaProgress } from '@inertiajs/progress';
 import { InertiaForm } from 'laravel-jetstream';
 import PortalVue from 'portal-vue';
+import VCalendar from 'v-calendar';
 
 var VueScrollTo = require('vue-scrollto');
 
@@ -15,6 +16,7 @@ Vue.use(InertiaApp);
 Vue.use(InertiaForm);
 Vue.use(PortalVue);
 Vue.use(VueScrollTo);
+Vue.use(VCalendar);
 
 InertiaProgress.init();
 

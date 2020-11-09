@@ -2,11 +2,18 @@
     <admin-layout>
         <div class="flex py-8">
            <div class="w-64 mt-12 pr-8 text-right">
-               <app-nav-link 
+                <app-nav-link 
                     :href="route('exams.show', [batch.batch_id, exam.exam_id])" 
                     :active="$page.currentRouteName == 'exams.show'"
                 >
                     Dashboard
+                </app-nav-link>
+
+                <app-nav-link 
+                    :href="route('results.index', exam.exam_id)" 
+                    :active="$page.currentRouteName == 'results.index'"
+                >
+                    Results
                 </app-nav-link>
 
                 <app-nav-link 
@@ -16,17 +23,10 @@
                     Questions
                 </app-nav-link>
 
-                <a class="flex flex-col items-end px-1 pt-1 text-base font-medium leading-5 text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-700 transition duration-150 ease-in-out" href="#" v-scroll-to="'#exam-schedule'">Exam Schedule</a>
+                <!-- <a class="flex flex-col items-end px-1 pt-1 text-base font-medium leading-5 text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-700 transition duration-150 ease-in-out" href="#" v-scroll-to="'#exam-schedule'">Exam Schedule</a>
                 <a class="flex flex-col items-end px-1 pt-1 text-base font-medium leading-5 text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-700 transition duration-150 ease-in-out" href="#" v-scroll-to="'#negetive-mark'">Negetive Mark</a>
                 <a class="flex flex-col items-end px-1 pt-1 text-base font-medium leading-5 text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-700 transition duration-150 ease-in-out" href="#" v-scroll-to="'#publish-exam'">Publish Exam</a>
-                <a class="flex flex-col items-end px-1 pt-1 text-base font-medium leading-5 text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-700 transition duration-150 ease-in-out" href="#" v-scroll-to="'#delete-exam'">Delete Exam</a>
-
-                <app-nav-link 
-                    :href="route('batches.show', batch.batch_id)" 
-                    :active="$page.currentRouteName == 'batches.show'"
-                >
-                    Result
-                </app-nav-link>
+                <a class="flex flex-col items-end px-1 pt-1 text-base font-medium leading-5 text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-700 transition duration-150 ease-in-out" href="#" v-scroll-to="'#delete-exam'">Delete Exam</a> -->
 
                 <app-nav-link 
                     :href="route('exams.index', batch.batch_id)" 

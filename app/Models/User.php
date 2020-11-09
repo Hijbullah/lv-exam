@@ -63,4 +63,21 @@ class User extends Authenticatable
     {
         return $this->belongsToMany('App\Models\Batch')->withPivot('is_active')->withTimestamps();
     }
+
+    public function scopeFilter($query, array $filters)
+    {
+        $query->when($filters['search'] ?? null, function ($query, $search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('email', 'like', '%'.$search.'%');
+                  
+            });
+        })->when($filters['type'] ?? null, function ($query, $type) {
+            if ($type === 'approved') {
+                $query->where('batch_user.is_active', 1);
+            } elseif ($type === 'un_approved') {
+                $query->where('batch_user.is_active', 0);
+            }
+        });
+    }
 }

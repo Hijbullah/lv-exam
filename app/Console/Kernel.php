@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -25,6 +26,15 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+
+        // do two things if pending then to published or published to closed
+        $schedule->call(function () {
+            DB::table('exams')
+                // ->whereDate('exam_date', '<=' ,Carbon::now()->format('Y-m-d'))
+                // ->whereTime('exam_end', '<=', Carbon::now()->format('H:i:s'))
+                ->where('status', '!=', 'closed')
+                ->update(['status' => 'closed']);
+        })->everyMinute();
     }
 
     /**
