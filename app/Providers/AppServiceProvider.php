@@ -28,22 +28,22 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Inertia::share('batch', function(Request $request) {
-            if (! $request->user()) {
-                return;
-            };
+        // Inertia::share('batch', function(Request $request) {
+        //     if (! $request->user()) {
+        //         return;
+        //     };
 
-            $batch = $request->user()->batches->first();
-            if(! $batch) {
-               return; 
-            };
+        //     $batch = $request->user()->batches->first();
+        //     if(! $batch) {
+        //        return; 
+        //     };
 
-            return [
-                'is_approved' => $batch->pivot->is_active,
-                'batch' => $batch->only('id', 'batch_id', 'name')
-            ];
+        //     return [
+        //         'is_approved' => $batch->pivot->is_active,
+        //         'batch' => $batch->only('id', 'batch_id', 'name')
+        //     ];
 
-        });
+        // });
     }
 
     protected function registerLengthAwarePaginator()

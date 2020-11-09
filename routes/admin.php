@@ -1,11 +1,15 @@
 <?php
 
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\Admin\BatchController;
 use App\Http\Controllers\Admin\ResultController;
 use App\Http\Controllers\Admin\StudentController;
+use App\Http\Controllers\Admin\Auth\LoginController;
 /*
 |--------------------------------------------------------------------------
 | admin Routes
@@ -19,8 +23,19 @@ use App\Http\Controllers\Admin\StudentController;
 
 Route::redirect('/', '/admin/dashboard');
 
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('admins.login');
+Route::post('/login', [LoginController::class, 'login']);
+Route::post('/logout', [LoginController::class, 'logout'])->name('admins.logout');
+
+Route::get('/after-login', function(Request $request)
+{
+    return $request->user('admin');
+})->middleware('auth:admin');
+
+
+
 // admin
-Route::middleware(['auth:sanctum', 'verified'])->group(function() {
+Route::middleware(['auth:admin', 'verified'])->group(function() {
     Route::get('/dashboard', function() {
         return Inertia\Inertia::render('Dashboard');
     })->name('admin.dashboard');

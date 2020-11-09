@@ -200,8 +200,8 @@
         methods: {
 
             logout() {
-                axios.post(route('logout').url()).then(response => {
-                    window.location = '/';
+                axios.post(route('admins.logout').url()).then(response => {
+                    window.location = '/admin/login';
                 })
             },
         },

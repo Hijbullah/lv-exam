@@ -3043,8 +3043,8 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     logout: function logout() {
-      axios.post(route('logout').url()).then(function (response) {
-        window.location = '/';
+      axios.post(route('admins.logout').url()).then(function (response) {
+        window.location = '/admin/login';
       });
     }
   },
