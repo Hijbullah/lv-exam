@@ -7,6 +7,7 @@ use Inertia\Inertia;
 use App\Models\Batch;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\ValidationException;
@@ -53,7 +54,19 @@ class ExamController extends Controller
         $exam['questions_count'] = $exam->questions->count();
 
         return Inertia::render('Exam/Show', [
-            'exam' => $exam,
+            'exam' => [
+                'id' => $exam->id,
+                'exam_id' => $exam->exam_id,
+                'exam_type' => $exam->exam_type,
+                'name' => $exam->name,
+                'total_question' => $exam->total_question,
+                'pass_mark' => $exam->pass_mark,
+                'has_negetive_mark' => $exam->has_negetive_mark,
+                'negetive_mark' => $exam->negetive_mark,
+                'started_at' => $exam->started_at ? $exam->started_at->format('Y-m-d\TH:i') : now()->format('Y-m-d\TH:i'),
+                'ended_at' => $exam->ended_at ? $exam->ended_at->format('Y-m-d\TH:i') : now()->format('Y-m-d\TH:i'),
+                'created_at' => now()->format('Y-m-d\TH:i')
+            ],
             'batch' => $batch->only('id', 'batch_id', 'name')
         ]);
     }
@@ -61,14 +74,18 @@ class ExamController extends Controller
     public function updateExamSchedule(Request $request, Exam $exam)
     {
         $request->validateWithBag('updateExamSchedule', [
-            'exam_date' => ['required', 'date'],
-            'exam_start' => ['required'],
-            'exam_end' => ['required'],
+            'started_at' => ['required', 'date'],
+            'ended_at' => ['required', 'date'],
         ]);
 
-        $exam->exam_date = $request->exam_date;
-        $exam->exam_start = $request->exam_start;
-        $exam->exam_end = $request->exam_end;
+        if ($request->started_at == $request->ended_at) {
+            throw ValidationException::withMessages([
+                'started_at' => [__('Exam end schedule must be greated than exam start schedule')],
+            ])->errorBag('updateExamSchedule');
+        }
+
+        $exam->started_at = $request->started_at;
+        $exam->ended_at = $request->ended_at;
         $exam->save();
         return back();
     }

@@ -15,26 +15,6 @@
                    
                 </div>
             </div>
-
-
-                     <hr />
-
-                    <div class="mt-12">
-                        date picker
-                    </div>
-                    <div class="w-1/3">
-                        <date-picker />
-
-                    </div>
-                     <hr />
-
-                    <div class="mt-12">
-                        date time picker
-                    </div>
-                    <div class="w-1/3">
-                        <date-time-picker />
-
-                    </div>
         </div>
     </admin-layout>
 </template>
@@ -43,16 +23,12 @@
     import AdminLayout from '@/Layouts/AdminLayout'
     import Welcome from '@/Jetstream/Welcome'
     import Editor from '@/Shared/Editor'
-    import DatePicker from '@/Shared/DatePicker'
-    import DateTimePicker from '@/Shared/DateTimePicker'
 
     export default {
         components: {
             AdminLayout,
             Welcome,
             Editor,
-            DatePicker,
-            DateTimePicker
         },
     }
 </script>

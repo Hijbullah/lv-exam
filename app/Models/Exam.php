@@ -16,6 +16,11 @@ class Exam extends Model
         'exam_type',
     ];
 
+    protected $casts = [
+        'started_at' => 'datetime',
+        'ended_at' => 'datetime',
+    ];
+
     public function batch()
     {
         return $this->belongsTo('App\Models\Batch');

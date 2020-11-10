@@ -27,9 +27,8 @@ class CreateExamsTable extends Migration
             $table->integer('duration')->nullable()->comment('in minute');
             $table->boolean('has_negetive_mark')->default(false);
             $table->float('negetive_mark')->default(0.25);
-            $table->date('exam_date')->nullable();
-            $table->time('exam_start')->nullable();
-            $table->time('exam_end')->nullable();
+            $table->timestamp('started_at')->nullable();
+            $table->timestamp('ended_at')->nullable();
 
             $table->json('subject_data')->nullable();
             $table->enum('status', ['pending', 'published', 'closed'])->default('pending');

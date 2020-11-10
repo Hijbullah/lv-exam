@@ -9,39 +9,30 @@
         </template>
 
         <template #content>
-            <!-- <div class="col-span-6">
-                <jet-label for="exam_date" value="Exam Date" />
-                <jet-input id="exam_date" type="date" class="mt-1 block w-full" v-model="form.exam_date" placeholder="Exam Date" />
-                <jet-input-error :message="form.error('exam_date')" class="mt-2" />
-            </div>
-
-            <div class="col-span-6 flex space-x-4">
-                <div class="w-1/2">
-                    <jet-label for="exam_start" value="Exam Start time" />
-                    <jet-input id="exam_start" type="time" class="mt-1 block w-full" v-model="form.exam_start" placeholder="Exam Start Time" />
-                    <jet-input-error :message="form.error('exam_start')" class="mt-2" />
+            <div class="flex justify-around items-center">
+                <div class="text-center">
+                    <p class="mb-3 font-semibold uppercase tracking-widest">Exam Start At</p>
+                    <v-date-picker v-model="form.started_at" mode="dateTime" :model-config="modelConfig" />
                 </div>
-                <div class="w-1/2">
-                    <jet-label for="exam_end" value="Exam End Time" />
-                    <jet-input id="exam_end" type="time" class="mt-1 block w-full" v-model="form.exam_end" placeholder="Exam End Time" />
-                    <jet-input-error :message="form.error('exam_end')" class="mt-2" />
-                </div> -->
-            <!-- </div> -->
-            <div class="">
-                <date-time-picker />
+                <div class="text-center">
+                    <p class="mb-3 font-semibold uppercase tracking-widest">Exam End At</p>
+                    <v-date-picker v-model="form.ended_at" mode="dateTime" :model-config="modelConfig" />
+                </div>
             </div>
+            <div v-if="form.error('started_at') || form.error('ended_at')" class="flex flex-col justify-center items-center mt-5">
+                <jet-input-error :message="form.error('started_at')"  class="mt-2" />
+                <jet-input-error :message="form.error('ended_at')"  class="mt-2" />
+            </div>
+            <div class="mt-5 flex justify-center items-center">
+                <jet-action-message :on="form.recentlySuccessful" class="mr-3">
+                    Saved.
+                </jet-action-message>
 
+                <jet-button @click.native="updateExamSchedule" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                    Save
+                </jet-button>
+            </div>
         </template>
-
-        <!-- <template #actions>
-            <jet-action-message :on="form.recentlySuccessful" class="mr-3">
-                Saved.
-            </jet-action-message>
-
-            <jet-button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                Save
-            </jet-button>
-        </template> -->
     </jet-action-section>
 </template>
 
@@ -52,7 +43,6 @@
     import JetInput from '@/Jetstream/Input'
     import JetInputError from '@/Jetstream/InputError'
     import JetLabel from '@/Jetstream/Label'
-    import DateTimePicker from '@/Shared/DateTimePicker'
 
     export default {
         components: {
@@ -62,7 +52,6 @@
             JetInput,
             JetInputError,
             JetLabel,
-            DateTimePicker
         },
 
         props: ['exam'],
@@ -70,13 +59,16 @@
         data() {
             return {
                 form: this.$inertia.form({
-                    exam_date: this.exam.exam_date,
-                    exam_start: this.exam.exam_start,
-                    exam_end: this.exam.exam_end
+                    started_at: this.exam.started_at,
+                    ended_at: this.exam.ended_at
                 }, {
                     bag: 'updateExamSchedule',
                     resetOnSuccess: false
-                })
+                }),
+                modelConfig: {
+                    type: 'string',
+                    mask: 'YYYY-MM-DD HH:mm',
+                },
             }
         },
 
