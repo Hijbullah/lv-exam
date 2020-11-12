@@ -107,7 +107,7 @@
                 return this.exam.total_question && this.exam.pass_mark && this.exam.duration;
             },
             updatedExamSchedule() {
-                return this.exam.exam_date && this.exam.exam_start && this.exam.exam_end;
+                return this.exam.started_at && this.exam.ended_at;
             }
         }
     }

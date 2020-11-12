@@ -12,11 +12,21 @@
             <div class="flex justify-around items-center">
                 <div class="text-center">
                     <p class="mb-3 font-semibold uppercase tracking-widest">Exam Start At</p>
-                    <v-date-picker v-model="form.started_at" mode="dateTime" :model-config="modelConfig" />
+                    <v-date-picker 
+                        v-model="form.started_at" 
+                        mode="dateTime" 
+                        :model-config="modelConfig" 
+                        :min-date="new Date()"
+                    />
                 </div>
                 <div class="text-center">
                     <p class="mb-3 font-semibold uppercase tracking-widest">Exam End At</p>
-                    <v-date-picker v-model="form.ended_at" mode="dateTime" :model-config="modelConfig" />
+                    <v-date-picker 
+                        v-model="form.ended_at" 
+                        mode="dateTime" 
+                        :model-config="modelConfig" 
+                        :min-date="new Date()"
+                    />
                 </div>
             </div>
             <div v-if="form.error('started_at') || form.error('ended_at')" class="flex flex-col justify-center items-center mt-5">

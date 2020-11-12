@@ -61,6 +61,7 @@ class ExamController extends Controller
                 'name' => $exam->name,
                 'total_question' => $exam->total_question,
                 'pass_mark' => $exam->pass_mark,
+                'duration' => $exam->duration,
                 'has_negetive_mark' => $exam->has_negetive_mark,
                 'negetive_mark' => $exam->negetive_mark,
                 'started_at' => $exam->started_at ? $exam->started_at->format('Y-m-d\TH:i') : now()->format('Y-m-d\TH:i'),

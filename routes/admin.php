@@ -32,6 +32,11 @@ Route::get('/after-login', function(Request $request)
     return $request->user('admin');
 })->middleware('auth:admin');
 
+Route::post('/editor/upload', function(Request $request) {
+    return response()->json([
+        'src' => 'https://images.unsplash.com/photo-1593642532009-6ba71e22f468?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80'
+    ]);
+});
 
 
 // admin
