@@ -4,8 +4,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ExamController;
-use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\Admin\ExamController;
+use App\Http\Controllers\Admin\QuestionController;
 use App\Http\Controllers\Admin\BatchController;
 use App\Http\Controllers\Admin\ResultController;
 use App\Http\Controllers\Admin\StudentController;
@@ -42,7 +42,7 @@ Route::post('/editor/upload', function(Request $request) {
 // admin
 Route::middleware(['auth:admin', 'verified'])->group(function() {
     Route::get('/dashboard', function() {
-        return Inertia\Inertia::render('Dashboard');
+        return Inertia\Inertia::render('Admin/Dashboard');
     })->name('admin.dashboard');
 
     // batch
