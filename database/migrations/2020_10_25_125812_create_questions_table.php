@@ -19,14 +19,13 @@ class CreateQuestionsTable extends Migration
                 ->constrained()
                 ->onDelete('cascade');
             
-            $table->mediumText('question');
-            $table->string('question_image')->nullable();
+            $table->longText('question');
             $table->string('subject')->nullable();
 
-            $table->string('option_a');
-            $table->string('option_b');
-            $table->string('option_c');
-            $table->string('option_d');
+            $table->text('option_a');
+            $table->text('option_b');
+            $table->text('option_c');
+            $table->text('option_d');
             $table->string('answer');
             $table->timestamps();
         });

@@ -1,18 +1,9 @@
 <template>
     <admin-layout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Dashboard
-            </h2>
-        </template>
-
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class=" overflow-hidden shadow-xl sm:rounded-lg">
-                    <!-- <welcome /> -->
-
-                    <editor v-model.lazy="content"/>
-                   
+                <div class="overflow-hidden">
+                    <h2 class="text-center text-4xl font-bold uppercase tracking-widest">Admin Dashboard</h2>
                 </div>
             </div>
         </div>

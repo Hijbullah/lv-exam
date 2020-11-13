@@ -4172,15 +4172,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 
@@ -5147,9 +5138,8 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Shared_Editor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Shared/Editor */ "./resources/js/Shared/Editor.vue");
 /* harmony import */ var _Jetstream_InputError__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/Jetstream/InputError */ "./resources/js/Jetstream/InputError.vue");
-/* harmony import */ var _Jetstream_Label__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/Jetstream/Label */ "./resources/js/Jetstream/Label.vue");
-/* harmony import */ var _Jetstream_Button__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/Jetstream/Button */ "./resources/js/Jetstream/Button.vue");
-/* harmony import */ var _Jetstream_DangerButton__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @/Jetstream/DangerButton */ "./resources/js/Jetstream/DangerButton.vue");
+/* harmony import */ var _Jetstream_Button__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/Jetstream/Button */ "./resources/js/Jetstream/Button.vue");
+/* harmony import */ var _Jetstream_DangerButton__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/Jetstream/DangerButton */ "./resources/js/Jetstream/DangerButton.vue");
 //
 //
 //
@@ -5209,12 +5199,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-
 
 
 
@@ -5223,15 +5207,15 @@ __webpack_require__.r(__webpack_exports__);
   components: {
     QuestionEditor: _Shared_Editor__WEBPACK_IMPORTED_MODULE_0__["default"],
     JetInputError: _Jetstream_InputError__WEBPACK_IMPORTED_MODULE_1__["default"],
-    JetButton: _Jetstream_Button__WEBPACK_IMPORTED_MODULE_3__["default"],
-    JetDangerButton: _Jetstream_DangerButton__WEBPACK_IMPORTED_MODULE_4__["default"]
+    JetButton: _Jetstream_Button__WEBPACK_IMPORTED_MODULE_2__["default"],
+    JetDangerButton: _Jetstream_DangerButton__WEBPACK_IMPORTED_MODULE_3__["default"]
   },
   props: ['examId'],
   data: function data() {
     return {
       showAddQuestionForm: false,
       form: this.$inertia.form({
-        question: '<h2>Question</h2>',
+        question: '<p><strong>Question</strong></p>',
         option_a: '<p>Option 1</p>',
         option_b: '<p>Option 2</p>',
         option_c: '<p>Option 3</p>',
@@ -5245,7 +5229,7 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     hideQuestionForm: function hideQuestionForm() {
       this.showAddQuestionForm = false;
-      this.form.question = '<h2>Question</h2>', this.form.option_a = '<p>Option 1</p>';
+      this.form.question = '<p><strong>Question</strong></p>', this.form.option_a = '<p>Option 1</p>';
       this.form.option_b = '<p>Option 1</p>';
       this.form.option_c = '<p>Option 1</p>';
       this.form.option_d = '<p>Option 1</p>';
@@ -5254,8 +5238,6 @@ __webpack_require__.r(__webpack_exports__);
     saveQuestion: function saveQuestion() {
       var _this = this;
 
-      console.log(this.form);
-      return;
       this.form.post(route('questions.store', this.examId), {
         preserveScroll: true
       }).then(function () {
@@ -5281,7 +5263,8 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _Jetstream_InputError__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Jetstream/InputError */ "./resources/js/Jetstream/InputError.vue");
+/* harmony import */ var _Shared_Editor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Shared/Editor */ "./resources/js/Shared/Editor.vue");
+/* harmony import */ var _Jetstream_InputError__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/Jetstream/InputError */ "./resources/js/Jetstream/InputError.vue");
 //
 //
 //
@@ -5343,9 +5326,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
-    JetInputError: _Jetstream_InputError__WEBPACK_IMPORTED_MODULE_0__["default"]
+    QuestionEditor: _Shared_Editor__WEBPACK_IMPORTED_MODULE_0__["default"],
+    JetInputError: _Jetstream_InputError__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
   props: ['question'],
   data: function data() {
@@ -5373,6 +5358,9 @@ __webpack_require__.r(__webpack_exports__);
           _this.$emit('cancel-update');
         }
       });
+    },
+    inputChange: function inputChange(event, property) {
+      this.form[property] = event;
     }
   }
 });
@@ -63609,52 +63597,22 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "admin-layout",
-    {
-      scopedSlots: _vm._u([
-        {
-          key: "header",
-          fn: function() {
-            return [
-              _c(
-                "h2",
-                {
-                  staticClass:
-                    "font-semibold text-xl text-gray-800 leading-tight"
-                },
-                [_vm._v("\n            Dashboard\n        ")]
-              )
-            ]
-          },
-          proxy: true
-        }
-      ])
-    },
-    [
-      _vm._v(" "),
-      _c("div", { staticClass: "py-12" }, [
-        _c("div", { staticClass: "max-w-7xl mx-auto sm:px-6 lg:px-8" }, [
+  return _c("admin-layout", [
+    _c("div", { staticClass: "py-12" }, [
+      _c("div", { staticClass: "max-w-7xl mx-auto sm:px-6 lg:px-8" }, [
+        _c("div", { staticClass: "overflow-hidden" }, [
           _c(
-            "div",
-            { staticClass: " overflow-hidden shadow-xl sm:rounded-lg" },
-            [
-              _c("editor", {
-                model: {
-                  value: _vm.content,
-                  callback: function($$v) {
-                    _vm.content = $$v
-                  },
-                  expression: "content"
-                }
-              })
-            ],
-            1
+            "h2",
+            {
+              staticClass:
+                "text-center text-4xl font-bold uppercase tracking-widest"
+            },
+            [_vm._v("Admin Dashboard")]
           )
         ])
       ])
-    ]
-  )
+    ])
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -65291,7 +65249,7 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "w-full" }, [
     _vm.showAddQuestionForm
-      ? _c("div", { staticClass: "p-5 bg-white shadow-md" }, [
+      ? _c("div", { staticClass: "p-5  shadow-md" }, [
           _c(
             "div",
             { staticClass: "w-full" },
@@ -65301,7 +65259,7 @@ var render = function() {
                 { staticClass: "flex flex-col" },
                 [
                   _c("question-editor", {
-                    staticClass: "border",
+                    staticClass: "border-2 border-gray-600 rounded bg-white",
                     attrs: { content: _vm.form.question },
                     on: {
                       input: function($event) {
@@ -65352,6 +65310,8 @@ var render = function() {
                     { staticClass: "flex flex-col" },
                     [
                       _c("question-editor", {
+                        staticClass:
+                          "border border-gray-600 bg-white rounded-md",
                         attrs: { content: _vm.form.option_a },
                         on: {
                           input: function($event) {
@@ -65402,6 +65362,8 @@ var render = function() {
                     { staticClass: "flex flex-col" },
                     [
                       _c("question-editor", {
+                        staticClass:
+                          "border border-gray-600 bg-white rounded-md",
                         attrs: { content: _vm.form.option_b },
                         on: {
                           input: function($event) {
@@ -65452,6 +65414,8 @@ var render = function() {
                     { staticClass: "flex flex-col" },
                     [
                       _c("question-editor", {
+                        staticClass:
+                          "border border-gray-600 bg-white rounded-md",
                         attrs: { content: _vm.form.option_c },
                         on: {
                           input: function($event) {
@@ -65502,6 +65466,8 @@ var render = function() {
                     { staticClass: "flex flex-col" },
                     [
                       _c("question-editor", {
+                        staticClass:
+                          "border border-gray-600 bg-white rounded-md",
                         attrs: { content: _vm.form.option_d },
                         on: {
                           input: function($event) {
@@ -65597,35 +65563,27 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "w-full" }, [
-    _c("div", { staticClass: "p-5 bg-white shadow-md" }, [
+    _c("div", { staticClass: "p-5 shadow-md" }, [
       _c(
         "div",
         { staticClass: "w-full" },
         [
-          _c("div", { staticClass: "flex flex-col" }, [
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.form.question,
-                  expression: "form.question"
-                }
-              ],
-              staticClass:
-                "form-input block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5",
-              attrs: { placeholder: "Question" },
-              domProps: { value: _vm.form.question },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
+          _c(
+            "div",
+            { staticClass: "flex flex-col" },
+            [
+              _c("question-editor", {
+                staticClass: "border-2 border-gray-600 rounded bg-white",
+                attrs: { content: _vm.form.question },
+                on: {
+                  input: function($event) {
+                    return _vm.inputChange($event, "question")
                   }
-                  _vm.$set(_vm.form, "question", $event.target.value)
                 }
-              }
-            })
-          ]),
+              })
+            ],
+            1
+          ),
           _vm._v(" "),
           _c("jet-input-error", {
             staticClass: "mt-2",
@@ -65659,32 +65617,24 @@ var render = function() {
           _vm._v(" "),
           _c(
             "div",
-            { staticClass: "w-1/2" },
+            { staticClass: "flex-1" },
             [
-              _c("div", { staticClass: "flex flex-col" }, [
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.form.option_a,
-                      expression: "form.option_a"
-                    }
-                  ],
-                  staticClass:
-                    "form-input block w-full py-1 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5",
-                  attrs: { placeholder: "Option 1" },
-                  domProps: { value: _vm.form.option_a },
-                  on: {
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
+              _c(
+                "div",
+                { staticClass: "flex flex-col" },
+                [
+                  _c("question-editor", {
+                    staticClass: "border border-gray-600 bg-white rounded-md",
+                    attrs: { content: _vm.form.option_a },
+                    on: {
+                      input: function($event) {
+                        return _vm.inputChange($event, "option_a")
                       }
-                      _vm.$set(_vm.form, "option_a", $event.target.value)
                     }
-                  }
-                })
-              ]),
+                  })
+                ],
+                1
+              ),
               _vm._v(" "),
               _c("jet-input-error", {
                 staticClass: "mt-2",
@@ -65718,32 +65668,24 @@ var render = function() {
           _vm._v(" "),
           _c(
             "div",
-            { staticClass: "w-1/2" },
+            { staticClass: "flex-1" },
             [
-              _c("div", { staticClass: "flex flex-col" }, [
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.form.option_b,
-                      expression: "form.option_b"
-                    }
-                  ],
-                  staticClass:
-                    "form-input block w-full py-1 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5",
-                  attrs: { placeholder: "Option 1" },
-                  domProps: { value: _vm.form.option_b },
-                  on: {
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
+              _c(
+                "div",
+                { staticClass: "flex flex-col" },
+                [
+                  _c("question-editor", {
+                    staticClass: "border border-gray-600 bg-white rounded-md",
+                    attrs: { content: _vm.form.option_b },
+                    on: {
+                      input: function($event) {
+                        return _vm.inputChange($event, "option_b")
                       }
-                      _vm.$set(_vm.form, "option_b", $event.target.value)
                     }
-                  }
-                })
-              ]),
+                  })
+                ],
+                1
+              ),
               _vm._v(" "),
               _c("jet-input-error", {
                 staticClass: "mt-2",
@@ -65777,32 +65719,24 @@ var render = function() {
           _vm._v(" "),
           _c(
             "div",
-            { staticClass: "w-1/2" },
+            { staticClass: "flex-1" },
             [
-              _c("div", { staticClass: "flex flex-col" }, [
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.form.option_c,
-                      expression: "form.option_c"
-                    }
-                  ],
-                  staticClass:
-                    "form-input block w-full py-1 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5",
-                  attrs: { placeholder: "Option 1" },
-                  domProps: { value: _vm.form.option_c },
-                  on: {
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
+              _c(
+                "div",
+                { staticClass: "flex flex-col" },
+                [
+                  _c("question-editor", {
+                    staticClass: "border border-gray-600 bg-white rounded-md",
+                    attrs: { content: _vm.form.option_c },
+                    on: {
+                      input: function($event) {
+                        return _vm.inputChange($event, "option_c")
                       }
-                      _vm.$set(_vm.form, "option_c", $event.target.value)
                     }
-                  }
-                })
-              ]),
+                  })
+                ],
+                1
+              ),
               _vm._v(" "),
               _c("jet-input-error", {
                 staticClass: "mt-2",
@@ -65836,32 +65770,24 @@ var render = function() {
           _vm._v(" "),
           _c(
             "div",
-            { staticClass: "w-1/2" },
+            { staticClass: "flex-1" },
             [
-              _c("div", { staticClass: "flex flex-col" }, [
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.form.option_d,
-                      expression: "form.option_d"
-                    }
-                  ],
-                  staticClass:
-                    "form-input block w-full py-1 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5",
-                  attrs: { placeholder: "Option 1" },
-                  domProps: { value: _vm.form.option_d },
-                  on: {
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
+              _c(
+                "div",
+                { staticClass: "flex flex-col" },
+                [
+                  _c("question-editor", {
+                    staticClass: "border border-gray-600 bg-white rounded-md",
+                    attrs: { content: _vm.form.option_d },
+                    on: {
+                      input: function($event) {
+                        return _vm.inputChange($event, "option_d")
                       }
-                      _vm.$set(_vm.form, "option_d", $event.target.value)
                     }
-                  }
-                })
-              ]),
+                  })
+                ],
+                1
+              ),
               _vm._v(" "),
               _c("jet-input-error", {
                 staticClass: "mt-2",
@@ -66088,13 +66014,10 @@ var render = function() {
               _vm._v(_vm._s(_vm.serial) + ".")
             ]),
             _vm._v(" "),
-            _c("p", { staticClass: "px-3 text-md font-semibold" }, [
-              _vm._v(
-                "\n                " +
-                  _vm._s(_vm.question.question) +
-                  "\n            "
-              )
-            ])
+            _c("div", {
+              staticClass: "ml-4",
+              domProps: { innerHTML: _vm._s(_vm.question.question) }
+            })
           ]),
           _vm._v(" "),
           _c("div", { staticClass: "pl-8 space-y-2" }, [
@@ -66106,13 +66029,10 @@ var render = function() {
                 domProps: { checked: _vm.question.answer == "a" }
               }),
               _vm._v(" "),
-              _c("p", { staticClass: "ml-3" }, [
-                _vm._v(
-                  "\n                    " +
-                    _vm._s(_vm.question.option_a) +
-                    "\n                "
-                )
-              ])
+              _c("div", {
+                staticClass: "ml-4",
+                domProps: { innerHTML: _vm._s(_vm.question.option_a) }
+              })
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "flex items-center" }, [
@@ -66123,13 +66043,10 @@ var render = function() {
                 domProps: { checked: _vm.question.answer == "b" }
               }),
               _vm._v(" "),
-              _c("p", { staticClass: "ml-3" }, [
-                _vm._v(
-                  "\n                    " +
-                    _vm._s(_vm.question.option_b) +
-                    "\n                "
-                )
-              ])
+              _c("div", {
+                staticClass: "ml-4",
+                domProps: { innerHTML: _vm._s(_vm.question.option_b) }
+              })
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "flex items-center" }, [
@@ -66140,13 +66057,10 @@ var render = function() {
                 domProps: { checked: _vm.question.answer == "c" }
               }),
               _vm._v(" "),
-              _c("p", { staticClass: "ml-3" }, [
-                _vm._v(
-                  "\n                    " +
-                    _vm._s(_vm.question.option_c) +
-                    "\n                "
-                )
-              ])
+              _c("div", {
+                staticClass: "ml-4",
+                domProps: { innerHTML: _vm._s(_vm.question.option_c) }
+              })
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "flex items-center" }, [
@@ -66157,13 +66071,10 @@ var render = function() {
                 domProps: { checked: _vm.question.answer == "d" }
               }),
               _vm._v(" "),
-              _c("p", { staticClass: "ml-3" }, [
-                _vm._v(
-                  "\n                    " +
-                    _vm._s(_vm.question.option_d) +
-                    "\n                "
-                )
-              ])
+              _c("div", {
+                staticClass: "ml-4",
+                domProps: { innerHTML: _vm._s(_vm.question.option_d) }
+              })
             ])
           ]),
           _vm._v(" "),

@@ -3,34 +3,34 @@
         <div v-if="!editQuestion" class="relative p-5 bg-white shadow-md">
             <div class="flex items-center mb-2">
                 <span class="text-xl font-bold">{{ serial }}.</span>
-                <p class="px-3 text-md font-semibold">
-                    {{ question.question }}
-                </p>
+                <div class="ml-4"
+                    v-html="question.question"
+                ></div>
             </div>
             <div class="pl-8 space-y-2">
                 <div class="flex items-center">
                     <input :checked="question.answer == 'a'" disabled type="radio" class="form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out">
-                    <p class="ml-3">
-                        {{ question.option_a }}
-                    </p>
+                    <div class="ml-4"
+                        v-html="question.option_a"
+                    ></div>
                 </div>
                 <div class="flex items-center">
                     <input :checked="question.answer == 'b'" disabled type="radio" class="form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out">
-                    <p class="ml-3">
-                        {{ question.option_b }}
-                    </p>
+                    <div class="ml-4"
+                        v-html="question.option_b"
+                    ></div>
                 </div>
                 <div class="flex items-center">
                     <input :checked="question.answer == 'c'" disabled type="radio" class="form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out">
-                    <p class="ml-3">
-                        {{ question.option_c }}
-                    </p>
+                    <div class="ml-4"
+                        v-html="question.option_c"
+                    ></div>
                 </div>
                 <div class="flex items-center">
                     <input :checked="question.answer == 'd'" disabled type="radio" class="form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out">
-                    <p class="ml-3">
-                        {{ question.option_d }}
-                    </p>
+                    <div class="ml-4"
+                        v-html="question.option_d"
+                    ></div>
                 </div>
             </div>
             <div class="absolute right-0 top-0 mt-4 mr-3">
