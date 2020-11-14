@@ -11,7 +11,7 @@
                 <app-nav-link 
                     :href="route('batches.create')" 
                     :active="$page.currentRouteName == 'batches.create'"
-                    >
+                >
                     Create New Batch
                 </app-nav-link>
            </div>
@@ -22,17 +22,20 @@
                         <div class="flex flex-col ">
                             <div class="w-full">
                                 <jet-label for="name" value="Batch Name" />
-                                <jet-input v-model="createBatchForm.name" id="name" type="text" class="mt-1 block w-full" placeholder="Batch Name" autocomplete="name" />
-                                <jet-input-error :message="createBatchForm.error('name')"  class="mt-2" />
+                                <jet-input v-model="form.name" id="name" type="text" class="mt-1 block w-full" placeholder="Batch Name" autocomplete="name" />
+                                <jet-input-error :message="form.error('name')"  class="mt-2" />
                             </div>
                             <div class="w-full mt-4 editor">
-                                <jet-label for="detail" value="Batch Name" />
-                                <vue-trix v-model="createBatchForm.detail" inputId="detail" class="mt-1 block w-full" placeholder="Details about batch"></vue-trix>
-                                <jet-input-error :message="createBatchForm.error('detail')"  class="mt-2" />
+                                <jet-label for="detail" value="Details About Batch" />
+                                <editor class="mt-2 bg-white border border-gray-300 rounded-md"
+                                    :content="form.detail" 
+                                    @input="inputChange"
+                                />
+                                <jet-input-error :message="form.error('detail')"  class="mt-2" />
                             </div>
                         </div>
                         <div class="mt-4 text-right">
-                            <jet-button :class="{ 'opacity-25': createBatchForm.processing }" :disabled="createBatchForm.processing">
+                            <jet-button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                                 Save
                             </jet-button>
                         </div>
@@ -49,7 +52,7 @@
     import JetInput from '@/Jetstream/Input'
     import JetInputError from '@/Jetstream/InputError'
     import JetLabel from '@/Jetstream/Label'
-    import VueTrix from "vue-trix";
+    import Editor from '@/Shared/Editor'
     import JetButton from '@/Jetstream/Button'
 
     export default {
@@ -59,13 +62,13 @@
             JetInput,
             JetInputError,
             JetLabel,
-            VueTrix,
+            Editor,
             JetButton
         },
         
         data() {
             return {
-                createBatchForm: this.$inertia.form({
+                form: this.$inertia.form({
                     name: '',
                     detail: '',
                 }, {
@@ -76,21 +79,15 @@
         },
         methods: {
             createBatch(){
-                 this.createBatchForm.post(route('batches.store'), {
+                 this.form.post(route('batches.store'), {
                     preserveScroll: true,
                 });
+            }, 
+            inputChange(event) {
+                this.form.detail = event;
             }
         }
         
         
     }
 </script>
-
-<style scoped>
-	.editor >>> trix-editor {
-		height: 250px !important;
-		max-height: 250px !important;
-        overflow-y: auto !important;
-        background: white !important;
-	}
-</style>

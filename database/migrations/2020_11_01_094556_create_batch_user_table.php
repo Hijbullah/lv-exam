@@ -15,8 +15,8 @@ class CreateBatchUserTable extends Migration
     {
         Schema::create('batch_user', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('batch_id')->constrained();
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('batch_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->boolean('is_active')->default(false);
             $table->timestamps();
         });

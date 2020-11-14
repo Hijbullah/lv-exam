@@ -10,7 +10,7 @@
                 </app-nav-link>
                 <app-nav-link 
                     :href="route('batches.create')" 
-                    :active="$page.currentRouteName == 'batches.create'"
+                    :active="$page.currentRouteName == 'batches.edit'"
                     >
                     Edit Batch
                 </app-nav-link>
@@ -27,7 +27,10 @@
                             </div>
                             <div class="w-full mt-4 editor">
                                 <jet-label for="detail" value="Batch Name" />
-                                <vue-trix v-model="form.detail" inputId="detail" class="mt-1 block w-full" placeholder="Details about batch"></vue-trix>
+                                <editor class="mt-2 bg-white border border-gray-300 rounded-md"
+                                    :content="form.detail" 
+                                    @input="inputChange"
+                                />                                
                                 <jet-input-error :message="form.error('detail')"  class="mt-2" />
                             </div>
                         </div>
@@ -53,7 +56,7 @@
     import JetInput from '@/Jetstream/Input'
     import JetInputError from '@/Jetstream/InputError'
     import JetLabel from '@/Jetstream/Label'
-    import VueTrix from "vue-trix";
+    import Editor from '@/Shared/Editor'
     import JetButton from '@/Jetstream/Button'
     import JetActionMessage from '@/Jetstream/ActionMessage'
 
@@ -64,7 +67,7 @@
             JetInput,
             JetInputError,
             JetLabel,
-            VueTrix,
+            Editor,
             JetButton,
             JetActionMessage
         },
@@ -86,18 +89,12 @@
                 this.form.post(route('batches.update', this.batch.batch_id), {
                     preserveScroll: true,
                 });
+            },
+            inputChange(event) {
+                this.form.detail = event;
             }
         }
         
         
     }
 </script>
-
-<style scoped>
-	.editor >>> trix-editor {
-		height: 250px !important;
-		max-height: 250px !important;
-        overflow-y: auto !important;
-        background: white !important;
-	}
-</style>

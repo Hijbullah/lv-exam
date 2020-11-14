@@ -18,16 +18,20 @@ class BatchController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         return Inertia::render('Admin/Batch/Index', [
-            'batches' => Batch::all()->map(function ($batch) {
-                return [
-                    'id' => $batch->id,
-                    'batch_id' => $batch->batch_id,
-                    'name' => $batch->name,
-                ];
-            }),
+            'filters' => $request->all('search'),
+            'batches' => Batch::filter($request->only('search'))
+                ->latest()
+                ->paginate()
+                ->transform(function ($batch) {
+                    return [
+                        'id' => $batch->id,
+                        'batch_id' => $batch->batch_id,
+                        'name' => $batch->name,
+                    ];
+                })
         ]);
     }
 
@@ -56,7 +60,7 @@ class BatchController extends Controller
 
         Batch::create([
             'name' => $request->name,
-            'batch_id' => (string) Str::uuid(),
+            'batch_id' => Str::random(11),
             'detail' => $request->detail
         ]);
 

@@ -15,7 +15,7 @@ class CreateResultsTable extends Migration
     {
         Schema::create('results', function (Blueprint $table) {
             $table->id();
-            $table->string('result_id')->unique();
+            $table->string('result_id', 15)->unique();
 
             $table->foreignId('user_id')
                 ->constrained()

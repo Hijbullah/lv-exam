@@ -110,43 +110,42 @@
     import throttle from 'lodash/throttle'
     
     export default {
-    components: {
-        AdminLayout,
-        AppNavLink,
-        Pagination,
-        SearchFilter,
-    },
-    props: {
-        batch: Object,
-        students: Object,
-        filters: Object,
-    },
-    data() {
-        return {
+        components: {
+            AdminLayout,
+            AppNavLink,
+            Pagination,
+            SearchFilter,
+        },
+        props: {
+            batch: Object,
+            students: Object,
+            filters: Object,
+        },
+        data() {
+            return {
+                form: {
+                    search: this.filters.search,
+                    type: this.filters.type
+                },
+            }
+        },
+        watch: {
             form: {
-                search: this.filters.search,
-                type: this.filters.type
+                handler: throttle(function() {
+                    let query = pickBy(this.form);
+                    query.batch = this.batch.batch_id;
+                    this.$inertia.replace(route('students.index', Object.keys(query).length ? query : { remember: 'forget' }))
+                }, 150),
+                deep: true,
             },
-        }
-    },
-    watch: {
-        form: {
-            handler: throttle(function() {
-                let query = pickBy(this.form);
-                query.batch = this.batch.batch_id;
-                
-                this.$inertia.replace(route('students.index', Object.keys(query).length ? query : { remember: 'forget' }))
-            }, 150),
-            deep: true,
         },
-    },
-    methods: {
-        approvedStudent(id, status) {
-            this.$inertia.post(route('students.approval', id), {status: !status}, {only: ['students']});
+        methods: {
+            approvedStudent(id, status) {
+                this.$inertia.post(route('students.approval', id), {status: !status}, {only: ['students']});
+            },
+            reset() {
+                this.form = mapValues(this.form, () => null)
+            },
         },
-        reset() {
-            this.form = mapValues(this.form, () => null)
-        },
-    },
     }
 </script>

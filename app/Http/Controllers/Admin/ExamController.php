@@ -45,7 +45,7 @@ class ExamController extends Controller
             'exam_type' => ['required', 'string', 'min:2', 'max:255']
         ]);
         
-        $data['exam_id'] = (string) Str::uuid();
+        $data['exam_id'] = Str::random(11);
         $exam = Exam::create($data);
         return Redirect::route('exams.show', [$batch->batch_id, $exam->exam_id]);
     }

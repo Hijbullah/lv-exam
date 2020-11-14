@@ -15,7 +15,7 @@ class CreateExamsTable extends Migration
     {
         Schema::create('exams', function (Blueprint $table) {
             $table->id();
-            $table->uuid('exam_id');
+            $table->string('exam_id', 15)->unique();
             $table->foreignId('batch_id')
                     ->constrained()
                     ->onDelete('cascade');
