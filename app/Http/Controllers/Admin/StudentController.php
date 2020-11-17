@@ -24,7 +24,7 @@ class StudentController extends Controller
                         'id' => $student->id,
                         'name' => $student->name,
                         'email' => $student->email,
-                        'is_approved' => $student->pivot->is_active ? true : false,
+                        'is_approved' => $student->is_batch_approved ? true : false,
                         'created_at' => $student->created_at->diffForHumans(),
                     ];
                 })
@@ -33,7 +33,7 @@ class StudentController extends Controller
 
     public function approveStudent(Request $request, $id)
     {
-        DB::table('batch_user')->where('user_id', $id)->update(['is_active' => $request->status]);
+        DB::table('users')->where('id', $id)->update(['is_batch_approved' => $request->status]);
         return back();
     }
 }

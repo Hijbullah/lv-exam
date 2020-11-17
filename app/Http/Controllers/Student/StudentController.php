@@ -18,49 +18,48 @@ class StudentController extends Controller
 {
     public function showBatch()
     { 
-        $batch = Auth::user()->batches->first();
-        
         return Inertia::render('Student/Batch/Show', [
-            'batch' => function() use ($batch) {
-                if(!$batch) {
+            'current_batch' => function() {
+                if(!Auth::user()->batch_id) {
                     return null;
                 }
                 return [
-                    'name' => $batch->name,
-                    'is_batch_approved' => $batch->pivot->is_active
+                    'name' => Auth::user()->batch->name,
+                    'is_batch_approved' => Auth::user()->is_batch_approved
                 ];
-            }
+            }, 
+            'batches' => Batch::latest()->get(['id', 'batch_id', 'name'])
         ]);
     }
 
     public function batchRequest(Request $request)
     {
         $request->validateWithBag('requestBatch', [
-            'batch_code' => ['required', 'string', 'min:8']
+            'batch_id' => ['required', 'string', 'min:8']
         ]);
 
-        $batch = Batch::where('batch_id', $request->batch_code)->first();
+        $batch = Batch::where('batch_id', $request->batch_id)->first(['id', 'batch_id']);
 
         if (! $batch) {
             throw ValidationException::withMessages([
-                'batch_code' => [__('The batch code provided by you is incorrect. Please, check again.')],
+                'batch_code' => [__('Something Wrong. Please, try again.')],
             ])->errorBag('requestBatch');
         }
 
-        $request->user()->batches()->attach($batch->id);
+        $request->user()->batch_id = $batch->id;
+        $request->user()->save();
         return back();
     }
 
     public function showCurrentExam()
     {
-        $batch = Auth::user()->batches->first();
-        $exam = Exam::whereBatchId($batch ? $batch['id'] :  null)
+        $exam = Exam::whereBatchId(Auth::user()->batch_id)
                 ->whereStatus('published')
                 // ->whereExamDate(Carbon::now()->format('Y-m-d'))
                 // ->whereTime('exam_start', '<=', Carbon::now()->format('H:i:s'))
                 // ->whereTime('exam_end', '>=', Carbon::now()->format('H:i:s'))
                 ->latest()
-                ->first(['id', 'exam_id', 'name', 'exam_type', 'exam_date', 'exam_start', 'exam_end']);
+                ->first(['id', 'exam_id', 'name', 'exam_type', 'started_at', 'ended_at']);
         
 
         return Inertia::render('Student/Exam/ExamCenter', [

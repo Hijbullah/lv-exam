@@ -59,10 +59,14 @@ class User extends Authenticatable
         'profile_photo_url',
     ];
 
-    public function batches()
+    public function batch()
     {
-        return $this->belongsToMany('App\Models\Batch')->withPivot('is_active')->withTimestamps();
+        return $this->belongsTo('App\Models\Batch');
     }
+    // public function batches()
+    // {
+    //     return $this->belongsToMany('App\Models\Batch')->withPivot('is_active')->withTimestamps();
+    // }
 
     public function scopeFilter($query, array $filters)
     {
@@ -74,9 +78,9 @@ class User extends Authenticatable
             });
         })->when($filters['type'] ?? null, function ($query, $type) {
             if ($type === 'approved') {
-                $query->where('batch_user.is_active', 1);
+                $query->where('is_batch_approved', 1);
             } elseif ($type === 'un_approved') {
-                $query->where('batch_user.is_active', 0);
+                $query->where('is_batch_approved', 0);
             }
         });
     }

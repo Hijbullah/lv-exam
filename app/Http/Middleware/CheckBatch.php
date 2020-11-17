@@ -16,7 +16,7 @@ class CheckBatch
      */
     public function handle(Request $request, Closure $next)
     {
-        if (!$request->user()->batches()->exists() || !$request->user()->batches()->first()->pivot->is_active) {
+        if (!$request->user()->batch_id || !$request->user()->is_batch_approved) {
             return redirect()->route('app.batches.show');
         }
 

@@ -22,7 +22,7 @@ class Batch extends Model
 
     public function students() // users
     {
-        return $this->belongsToMany('App\Models\User')->withPivot('is_active')->withTimestamps();
+        return $this->hasMany('App\Models\User');
     }
 
     public function scopeFilter($query, array $filters)

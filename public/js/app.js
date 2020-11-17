@@ -6867,6 +6867,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -6878,11 +6886,14 @@ __webpack_require__.r(__webpack_exports__);
     JetInputError: _Jetstream_InputError__WEBPACK_IMPORTED_MODULE_2__["default"],
     JetButton: _Jetstream_Button__WEBPACK_IMPORTED_MODULE_3__["default"]
   },
-  props: ['batch'],
+  props: {
+    current_batch: Object,
+    batches: Array
+  },
   data: function data() {
     return {
       form: this.$inertia.form({
-        batch_code: ''
+        batch_id: ''
       }, {
         bag: 'requestBatch'
       })
@@ -6896,23 +6907,21 @@ __webpack_require__.r(__webpack_exports__);
         preserveScroll: true
       }).then(function () {
         if (!_this.form.hasErrors()) {
-          console.log('no error');
+          _this.form.batch_id = '';
         }
       });
+    },
+    selectBatch: function selectBatch(batchId) {
+      this.form.batch_id = batchId;
     }
   },
   computed: {
     hasBatch: function hasBatch() {
-      return !_.isEmpty(this.batch);
+      return !_.isEmpty(this.current_batch);
     },
     isBatchApproved: function isBatchApproved() {
-      return this.batch.is_batch_approved;
+      return this.current_batch.is_batch_approved;
     }
-  },
-  mounted: function mounted() {
-    console.log(this.batch); // if(!this.batch){
-    //     this.$refs.batch_code_input.focus();
-    // }
   }
 });
 
@@ -6959,15 +6968,6 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Layouts_AppLayout__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Layouts/AppLayout */ "./resources/js/Layouts/AppLayout.vue");
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -67564,7 +67564,7 @@ var render = function() {
                                 staticClass:
                                   "text-indigo-600 font-extrabold border-b-2 border-indigo-700"
                               },
-                              [_vm._v(_vm._s(_vm.batch.name))]
+                              [_vm._v(_vm._s(_vm.current_batch.name))]
                             ),
                             _vm._v(".")
                           ]
@@ -67595,7 +67595,7 @@ var render = function() {
                               staticClass:
                                 "text-indigo-600 font-extrabold border-b-2 border-indigo-700"
                             },
-                            [_vm._v(_vm._s(_vm.batch.name))]
+                            [_vm._v(_vm._s(_vm.current_batch.name))]
                           ),
                           _vm._v(".")
                         ]
@@ -67621,51 +67621,68 @@ var render = function() {
                   _vm._v(" "),
                   _c(
                     "div",
-                    { staticClass: "space-y-4 text-center" },
                     [
-                      _c(
-                        "label",
-                        { staticClass: "inline-flex items-center text-xl" },
-                        [_vm._v("Batch Code")]
-                      ),
+                      _c("h2", { staticClass: "mb-5 text-xl" }, [
+                        _vm._v("Select a batch: ")
+                      ]),
                       _vm._v(" "),
-                      _c("jet-input", {
-                        ref: "batch_code_input",
-                        staticClass: "block w-full",
-                        attrs: { placeholder: "Enter Batch Code" },
-                        model: {
-                          value: _vm.form.batch_code,
-                          callback: function($$v) {
-                            _vm.$set(_vm.form, "batch_code", $$v)
-                          },
-                          expression: "form.batch_code"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("jet-input-error", {
-                        staticClass: "mt-2",
-                        attrs: { message: _vm.form.error("batch_code") }
-                      }),
-                      _vm._v(" "),
-                      _c(
-                        "button",
-                        {
-                          staticClass:
-                            "inline-flex items-center px-3 py-2 bg-gray-900 text-white text-sm font-bold tracking-widest uppercase rounded hover:bg-gray-700 focus:outline-none",
-                          class: { "opacity-25": _vm.form.processing },
-                          attrs: { disabled: _vm.form.processing },
-                          on: {
-                            click: function($event) {
-                              $event.preventDefault()
-                              return _vm.requestForBatch($event)
+                      _vm._l(_vm.batches, function(batch) {
+                        return _c(
+                          "button",
+                          {
+                            key: batch.id,
+                            staticClass:
+                              "inline-flex items-center px-2 py-1 bg-white text-gray-800 text-base font-bold uppercase tracking-widest border-2 border-gray-700 rounded hover:bg-indigo-600 hover:text-white hover:border-indigo-700 focus:outline-none focus:border-indigo-700 focus:bg-indigo-600 focus:text-white",
+                            on: {
+                              click: function($event) {
+                                $event.preventDefault()
+                                return _vm.selectBatch(batch.batch_id)
+                              }
                             }
-                          }
-                        },
-                        [_vm._v("Send Request")]
-                      )
+                          },
+                          [
+                            _vm._v(
+                              "\n                                " +
+                                _vm._s(batch.name) +
+                                "\n                            "
+                            )
+                          ]
+                        )
+                      })
                     ],
-                    1
-                  )
+                    2
+                  ),
+                  _vm._v(" "),
+                  _vm.form.batch_id
+                    ? _c(
+                        "div",
+                        { staticClass: "mt-4 space-y-4" },
+                        [
+                          _c("jet-input-error", {
+                            staticClass: "mt-2",
+                            attrs: { message: _vm.form.error("batch_code") }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "button",
+                            {
+                              staticClass:
+                                "inline-flex items-center px-3 py-2 bg-gray-900 text-white text-sm font-bold tracking-widest uppercase rounded hover:bg-gray-700 focus:outline-none",
+                              class: { "opacity-25": _vm.form.processing },
+                              attrs: { disabled: _vm.form.processing },
+                              on: {
+                                click: function($event) {
+                                  $event.preventDefault()
+                                  return _vm.requestForBatch($event)
+                                }
+                              }
+                            },
+                            [_vm._v("Send Request")]
+                          )
+                        ],
+                        1
+                      )
+                    : _vm._e()
                 ])
               ])
         ])
@@ -67740,163 +67757,114 @@ var render = function() {
         ),
         _vm._v(" "),
         _c("div", { staticClass: "w-full overflow-hidden mt-8" }, [
-          _vm.hasBatch
-            ? _c("div", [
-                _vm.isBatchApproved
-                  ? _c("div", { staticClass: "flex" }, [
-                      _c("div", { staticClass: "flex-1 bg-white shadow-md" }, [
-                        _c(
-                          "h4",
-                          {
-                            staticClass:
-                              "bg-gray-900 px-3 py-2 text-white font-bold uppercase tracking-widest"
-                          },
-                          [_vm._v("Current Exam")]
-                        ),
-                        _vm._v(" "),
-                        _vm.exam
-                          ? _c(
-                              "div",
-                              {
-                                staticClass:
-                                  "flex justify-between items-center mt-4 px-3 py-3"
-                              },
-                              [
-                                _c(
-                                  "div",
-                                  { staticClass: "flex items-center" },
-                                  [
-                                    _c(
-                                      "p",
-                                      {
-                                        staticClass:
-                                          "text-dark-800 text-xl font-semibold"
-                                      },
-                                      [_vm._v(_vm._s(_vm.exam.exam_type) + ":")]
-                                    ),
-                                    _vm._v(" "),
-                                    _c(
-                                      "p",
-                                      {
-                                        staticClass:
-                                          "ml-3 text-dark-800 text-xl font-semibold"
-                                      },
-                                      [_vm._v(_vm._s(_vm.exam.name))]
-                                    )
-                                  ]
-                                ),
-                                _vm._v(" "),
-                                _c("div", [
-                                  _c("p", [
-                                    _vm._v(
-                                      "Exam Start at: " +
-                                        _vm._s(_vm.exam.exam_date) +
-                                        " " +
-                                        _vm._s(_vm.exam.exam_start)
-                                    )
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("p", [
-                                    _vm._v(
-                                      "Exam End at: " +
-                                        _vm._s(_vm.exam.exam_date) +
-                                        " " +
-                                        _vm._s(_vm.exam.exam_end)
-                                    )
-                                  ])
-                                ]),
-                                _vm._v(" "),
-                                _c("div", [
-                                  _c(
-                                    "button",
-                                    {
-                                      staticClass:
-                                        "px-3 py-2 inline-flex items-center bg-gray-900 text-white text-sm font-semibold uppercase tracking-widest rounded hover:bg-gray-700 focus:outline-none",
-                                      on: {
-                                        click: function($event) {
-                                          $event.preventDefault()
-                                          return _vm.takeExam($event)
-                                        }
-                                      }
-                                    },
-                                    [
-                                      _vm._v(
-                                        "\n                                        Take Exam\n                                    "
-                                      )
-                                    ]
-                                  )
-                                ])
-                              ]
-                            )
-                          : _c(
-                              "div",
-                              {
-                                staticClass:
-                                  "flex flex-col justify-center items-center mt-4 px-4 py-3"
-                              },
-                              [
-                                _vm._v(
-                                  "\n                                You have no Exam at this time.\n                                "
-                                ),
-                                _c(
-                                  "button",
-                                  {
-                                    staticClass:
-                                      "mt-3 px-2 py-1 inline-flex items-center bg-gray-900 text-white text-sm font-semibold uppercase tracking-widest rounded hover:bg-gray-700",
-                                    on: {
-                                      click: function($event) {
-                                        $event.preventDefault()
-                                        return _vm.reloadPage($event)
-                                      }
-                                    }
-                                  },
-                                  [_vm._v("Refresh")]
-                                )
-                              ]
-                            )
-                      ])
-                    ])
-                  : _c("div", { staticClass: "text-center" }, [
-                      _c(
-                        "p",
-                        { staticClass: "text-xl text-gray-900 font-semibold" },
-                        [
-                          _vm._v("You have Requested For Batch "),
-                          _c(
-                            "span",
-                            {
-                              staticClass:
-                                "text-indigo-600 font-extrabold border-b-2 border-indigo-700"
-                            },
-                            [_vm._v(_vm._s(_vm.$page.batch.batch.name))]
-                          ),
-                          _vm._v(".")
-                        ]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "p",
-                        { staticClass: "text-xl text-gray-900 font-semibold" },
-                        [_vm._v("Wait for Approval.")]
-                      )
-                    ])
-              ])
-            : _c("div", [
-                _c("div", { staticClass: "max-w-md mx-auto" }, [
-                  _c(
-                    "p",
+          _c("div", { staticClass: "flex" }, [
+            _c("div", { staticClass: "flex-1 bg-white shadow-md" }, [
+              _c(
+                "h4",
+                {
+                  staticClass:
+                    "bg-gray-900 px-3 py-2 text-white font-bold uppercase tracking-widest"
+                },
+                [_vm._v("Current Exam")]
+              ),
+              _vm._v(" "),
+              _vm.exam
+                ? _c(
+                    "div",
                     {
                       staticClass:
-                        "mb-4 text-red-700 text-center text-xl font-semibold"
+                        "flex justify-between items-center mt-4 px-3 py-3"
+                    },
+                    [
+                      _c("div", { staticClass: "flex items-center" }, [
+                        _c(
+                          "p",
+                          {
+                            staticClass: "text-dark-800 text-xl font-semibold"
+                          },
+                          [_vm._v(_vm._s(_vm.exam.exam_type) + ":")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "p",
+                          {
+                            staticClass:
+                              "ml-3 text-dark-800 text-xl font-semibold"
+                          },
+                          [_vm._v(_vm._s(_vm.exam.name))]
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("div", [
+                        _c("p", [
+                          _vm._v(
+                            "Exam Start at: " +
+                              _vm._s(_vm.exam.exam_date) +
+                              " " +
+                              _vm._s(_vm.exam.exam_start)
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("p", [
+                          _vm._v(
+                            "Exam End at: " +
+                              _vm._s(_vm.exam.exam_date) +
+                              " " +
+                              _vm._s(_vm.exam.exam_end)
+                          )
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("div", [
+                        _c(
+                          "button",
+                          {
+                            staticClass:
+                              "px-3 py-2 inline-flex items-center bg-gray-900 text-white text-sm font-semibold uppercase tracking-widest rounded hover:bg-gray-700 focus:outline-none",
+                            on: {
+                              click: function($event) {
+                                $event.preventDefault()
+                                return _vm.takeExam($event)
+                              }
+                            }
+                          },
+                          [
+                            _vm._v(
+                              "\n                                        Take Exam\n                                    "
+                            )
+                          ]
+                        )
+                      ])
+                    ]
+                  )
+                : _c(
+                    "div",
+                    {
+                      staticClass:
+                        "flex flex-col justify-center items-center mt-4 px-4 py-3"
                     },
                     [
                       _vm._v(
-                        "You have no Batch! Go to Batch section and Request for One "
+                        "\n                                You have no Exam at this time.\n                                "
+                      ),
+                      _c(
+                        "button",
+                        {
+                          staticClass:
+                            "mt-3 px-2 py-1 inline-flex items-center bg-gray-900 text-white text-sm font-semibold uppercase tracking-widest rounded hover:bg-gray-700",
+                          on: {
+                            click: function($event) {
+                              $event.preventDefault()
+                              return _vm.reloadPage($event)
+                            }
+                          }
+                        },
+                        [_vm._v("Refresh")]
                       )
                     ]
                   )
-                ])
-              ])
+            ])
+          ])
         ])
       ])
     ])
