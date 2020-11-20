@@ -66,7 +66,9 @@
 
         methods: {
             deleteQuestion(id) {
-                this.$inertia.delete(route('questions.destroy', id));
+                this.$inertia.delete(route('questions.destroy', id), {
+                    preserveScroll: true
+                });
             }
         }
     }

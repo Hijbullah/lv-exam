@@ -34,25 +34,23 @@
                         <table class="w-full whitespace-no-wrap">
                             <tr class="text-left font-bold">
                                 <th class="px-6 pt-4 pb-4">Name</th>
-                                <!-- <th class="px-6 pt-4 pb-4">Exam Date</th>
-                                <th class="px-6 pt-4 pb-4">Total Mark</th>
-                                <th class="px-6 pt-4 pb-4">Position</th> -->
-                                <th class="px-6 pt-4 pb-4">Action</th>
+                                <th class="px-6 pt-4 pb-4 text-center">Exam (s)</th>
+                                <th class="px-6 pt-4 pb-4 text-center">Student (s)</th>
+                                
+                                <th class="px-6 pt-4 pb-4 text-center">Action</th>
                             </tr>
                             <tr v-for="batch in batches.data" :key="batch.id" class="hover:bg-gray-100 focus-within:bg-gray-100">
                                 <td class="border-t px-6 py-2">
                                     {{ batch.name }}
                                 </td>
-                                <!-- <td class="border-t px-6 py-2">
-                                    {{ batch.exam_taken_at }}
+                                <td class="border-t px-6 py-2 text-center">
+                                    {{ batch.exams_count }}
                                 </td>
-                                <td class="border-t px-6 py-2">
-                                    {{ batch.total_mark }}
+                                <td class="border-t px-6 py-2 text-center">
+                                    {{ batch.students_count }}
                                 </td>
-                                <td class="border-t px-6 py-2">
-                                    {{ batch.position ? batch.position : 'not published yet'}}
-                                </td> -->
-                                <td class="border-t px-6 py-2">
+                               
+                                <td class="border-t px-6 py-2 text-center">
                                     <inertia-link :href="route('batches.show', batch.batch_id)" class="inline-flex ml-2 px-2 py-1 bg-gray-800 text-white font-semibold text-xs tracking-widest uppercase rounded-md hover:bg-gray-600">Dashboard</inertia-link>
                                     <inertia-link :href="route('batches.edit', batch.batch_id)" class="inline-flex px-2 py-1 bg-gray-800 text-white font-semibold text-xs tracking-widest uppercase rounded-md hover:bg-gray-600">Edit</inertia-link>
                                 </td>
@@ -65,24 +63,6 @@
 
                     <pagination v-if="batches.data.length" :links="batches.links" />
                 </div>
-                <!-- <div class="mt-5">
-                    <div v-if="batches.length == 0" class="flex flex-col items-center">
-                        <p class="pt-6 text-xl font-semibold text-red-600">No batch found! Create a Batch.</p>
-                        <inertia-link :href="route('batches.create')" class="inline-flex mt-5 px-4 py-2 bg-gray-800 text-white font-semibold text-xs tracking-widest uppercase rounded-md hover:bg-gray-600">Create new Batch</inertia-link>
-
-                    </div>
-                    <div v-else>
-                        <div v-for="batch in batches" :key="batch.id">
-                            <div class="flex justify-between items-center px-4 py-2 mb-2 bg-white rounded">
-                                <h2>{{ batch.name }}</h2>
-                                <div>
-                                    <inertia-link :href="route('batches.edit', batch.batch_id)" class="inline-flex px-2 py-1 bg-gray-800 text-white font-semibold text-xs tracking-widest uppercase rounded-md hover:bg-gray-600">Edit</inertia-link>
-                                    <inertia-link :href="route('batches.show', batch.batch_id)" class="inline-flex ml-2 px-2 py-1 bg-gray-800 text-white font-semibold text-xs tracking-widest uppercase rounded-md hover:bg-gray-600">Dashboard</inertia-link>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
             </div>
         </div>
     </admin-layout>

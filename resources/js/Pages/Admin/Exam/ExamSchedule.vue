@@ -1,7 +1,12 @@
 <template>
-    <jet-action-section @submitted="updateExamSchedule">
+    <jet-action-section>
         <template #title>
-            Exam Schedule
+            <div class="flex items-center">
+                <span>Exam Schedule</span>    
+                <span class="ml-2" :class="[done ? 'text-green-600' : 'text-red-600']">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>   
+                </span>
+            </div>
         </template>
 
         <template #description>
@@ -77,6 +82,12 @@
                     type: 'string',
                     mask: 'YYYY-MM-DD HH:mm',
                 },
+            }
+        },
+
+        computed: {
+            done() {
+                return this.exam.started_at && this.exam.ended_at;
             }
         },
 

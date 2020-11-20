@@ -13,23 +13,21 @@ use Illuminate\Validation\ValidationException;
 
 class BatchController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request)
     {
         return Inertia::render('Admin/Batch/Index', [
             'filters' => $request->all('search'),
             'batches' => Batch::filter($request->only('search'))
+                ->withCount(['exams', 'students'])
                 ->latest()
-                ->paginate()
+                ->paginate(10)
                 ->transform(function ($batch) {
                     return [
                         'id' => $batch->id,
                         'batch_id' => $batch->batch_id,
                         'name' => $batch->name,
+                        'exams_count' => $batch->exams_count,
+                        'students_count' => $batch->students_count
                     ];
                 })
         ]);

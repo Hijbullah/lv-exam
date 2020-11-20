@@ -14,8 +14,8 @@
                                         <p class="ml-3 text-dark-800 text-xl font-semibold">{{ exam.name }}</p>
                                     </div>
                                     <div>
-                                        <p>Exam Start at: {{ exam.exam_date }} {{ exam.exam_start }}</p>
-                                        <p>Exam End at: {{ exam.exam_date }} {{ exam.exam_end }}</p>
+                                        <!-- <p>Exam Start at: {{ exam.started_at }}</p> -->
+                                        <p>Exam End at: <span class="font-bold">{{ exam.ended_at }}</span></p>
                                     </div>
                                     <div>
                                         <button 

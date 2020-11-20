@@ -4101,26 +4101,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 
@@ -4605,6 +4585,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -4634,6 +4619,11 @@ __webpack_require__.r(__webpack_exports__);
         resetOnSuccess: false
       })
     };
+  },
+  computed: {
+    done: function done() {
+      return this.exam.total_question && this.exam.pass_mark && this.exam.duration;
+    }
   },
   methods: {
     updateBasicInfo: function updateBasicInfo() {
@@ -4977,6 +4967,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -5008,6 +5003,11 @@ __webpack_require__.r(__webpack_exports__);
       }
     };
   },
+  computed: {
+    done: function done() {
+      return this.exam.started_at && this.exam.ended_at;
+    }
+  },
   methods: {
     updateExamSchedule: function updateExamSchedule() {
       this.form.put(route('exams.update-schedule', this.exam.exam_id), {
@@ -5030,6 +5030,8 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Layouts_AdminLayout__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Layouts/AdminLayout */ "./resources/js/Layouts/AdminLayout.vue");
 /* harmony import */ var _component_NavLink__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/component/NavLink */ "./resources/js/component/NavLink.vue");
+/* harmony import */ var _Shared_Pagination__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/Shared/Pagination */ "./resources/js/Shared/Pagination.vue");
+/* harmony import */ var _Shared_SearchFilter__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/Shared/SearchFilter */ "./resources/js/Shared/SearchFilter.vue");
 //
 //
 //
@@ -5087,14 +5089,84 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
     AdminLayout: _Layouts_AdminLayout__WEBPACK_IMPORTED_MODULE_0__["default"],
-    AppNavLink: _component_NavLink__WEBPACK_IMPORTED_MODULE_1__["default"]
+    AppNavLink: _component_NavLink__WEBPACK_IMPORTED_MODULE_1__["default"],
+    Pagination: _Shared_Pagination__WEBPACK_IMPORTED_MODULE_2__["default"],
+    SearchFilter: _Shared_SearchFilter__WEBPACK_IMPORTED_MODULE_3__["default"]
   },
-  props: ['exams', 'batch']
+  props: {
+    batch: Object,
+    exams: Object,
+    filters: Object
+  },
+  data: function data() {
+    return {
+      form: {
+        search: this.filters.search
+      }
+    };
+  },
+  watch: {
+    form: {
+      handler: _.throttle(function () {
+        var query = _.pickBy(this.form);
+
+        query.batch = this.batch.batch_id;
+        this.$inertia.replace(route('exams.index', Object.keys(query).length ? query : {
+          remember: 'forget'
+        }));
+      }, 150),
+      deep: true
+    }
+  },
+  methods: {
+    reset: function reset() {
+      this.form = _.mapValues(this.form, function () {
+        return null;
+      });
+    }
+  }
 });
 
 /***/ }),
@@ -5235,6 +5307,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Jetstream_InputError__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/Jetstream/InputError */ "./resources/js/Jetstream/InputError.vue");
 /* harmony import */ var _Jetstream_Button__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/Jetstream/Button */ "./resources/js/Jetstream/Button.vue");
 /* harmony import */ var _Jetstream_DangerButton__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/Jetstream/DangerButton */ "./resources/js/Jetstream/DangerButton.vue");
+/* harmony import */ var _QuestionUploadZone__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./QuestionUploadZone */ "./resources/js/Pages/Admin/Question/QuestionUploadZone.vue");
 //
 //
 //
@@ -5294,6 +5367,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 
 
@@ -5303,12 +5386,14 @@ __webpack_require__.r(__webpack_exports__);
     QuestionEditor: _Shared_Editor__WEBPACK_IMPORTED_MODULE_0__["default"],
     JetInputError: _Jetstream_InputError__WEBPACK_IMPORTED_MODULE_1__["default"],
     JetButton: _Jetstream_Button__WEBPACK_IMPORTED_MODULE_2__["default"],
-    JetDangerButton: _Jetstream_DangerButton__WEBPACK_IMPORTED_MODULE_3__["default"]
+    JetDangerButton: _Jetstream_DangerButton__WEBPACK_IMPORTED_MODULE_3__["default"],
+    QuestionUploadZone: _QuestionUploadZone__WEBPACK_IMPORTED_MODULE_4__["default"]
   },
   props: ['examId'],
   data: function data() {
     return {
       showAddQuestionForm: false,
+      showUploadZone: false,
       form: this.$inertia.form({
         question: '<p><strong>Question</strong></p>',
         option_a: '<p>Option 1</p>',
@@ -5617,7 +5702,107 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     deleteQuestion: function deleteQuestion(id) {
-      this.$inertia["delete"](route('questions.destroy', id));
+      this.$inertia["delete"](route('questions.destroy', id), {
+        preserveScroll: true
+      });
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Pages/Admin/Question/QuestionUploadZone.vue?vue&type=script&lang=js&":
+/*!***************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/Pages/Admin/Question/QuestionUploadZone.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Jetstream_InputError__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Jetstream/InputError */ "./resources/js/Jetstream/InputError.vue");
+/* harmony import */ var _Jetstream_Button__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/Jetstream/Button */ "./resources/js/Jetstream/Button.vue");
+/* harmony import */ var _Jetstream_DangerButton__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/Jetstream/DangerButton */ "./resources/js/Jetstream/DangerButton.vue");
+/* harmony import */ var _Shared_LoadingButton__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/Shared/LoadingButton */ "./resources/js/Shared/LoadingButton.vue");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    JetInputError: _Jetstream_InputError__WEBPACK_IMPORTED_MODULE_0__["default"],
+    JetButton: _Jetstream_Button__WEBPACK_IMPORTED_MODULE_1__["default"],
+    JetDangerButton: _Jetstream_DangerButton__WEBPACK_IMPORTED_MODULE_2__["default"],
+    LoadingButton: _Shared_LoadingButton__WEBPACK_IMPORTED_MODULE_3__["default"]
+  },
+  props: {
+    examId: String
+  },
+  data: function data() {
+    return {
+      sending: false,
+      fileName: '',
+      form: this.$inertia.form({
+        uploadFile: null
+      }, {
+        bag: 'uploadQuestionFile'
+      })
+    };
+  },
+  methods: {
+    selectQuestionFile: function selectQuestionFile() {
+      this.$refs.questions_file.click();
+    },
+    handleUploadedFile: function handleUploadedFile(event) {
+      this.form.uploadFile = event.target.files[0];
+      this.fileName = this.form.uploadFile.name;
+      console.log(this.form.uploadFile);
+    },
+    uploadQuestionFile: function uploadQuestionFile() {
+      var _this = this;
+
+      this.sending = true;
+      this.form.post(route('questions.upload-questions-file', this.examId), {
+        preserveScroll: true
+      }).then(function () {
+        _this.sending = false;
+
+        if (!_this.form.hasErrors()) {
+          _this.$emit('hide-question-uploadzone');
+        }
+      });
+    },
+    hideUploadZone: function hideUploadZone() {
+      this.form.uploadFile = false;
+
+      if (this.form.error('uploadFile')) {
+        this.$inertia.reload();
+      }
+
+      this.$emit('hide-question-uploadzone');
     }
   }
 });
@@ -62744,7 +62929,15 @@ var render = function() {
                         _vm._v("Name")
                       ]),
                       _vm._v(" "),
-                      _c("th", { staticClass: "px-6 pt-4 pb-4" }, [
+                      _c("th", { staticClass: "px-6 pt-4 pb-4 text-center" }, [
+                        _vm._v("Exam (s)")
+                      ]),
+                      _vm._v(" "),
+                      _c("th", { staticClass: "px-6 pt-4 pb-4 text-center" }, [
+                        _vm._v("Student (s)")
+                      ]),
+                      _vm._v(" "),
+                      _c("th", { staticClass: "px-6 pt-4 pb-4 text-center" }, [
                         _vm._v("Action")
                       ])
                     ]),
@@ -62768,7 +62961,31 @@ var render = function() {
                           _vm._v(" "),
                           _c(
                             "td",
-                            { staticClass: "border-t px-6 py-2" },
+                            { staticClass: "border-t px-6 py-2 text-center" },
+                            [
+                              _vm._v(
+                                "\n                                " +
+                                  _vm._s(batch.exams_count) +
+                                  "\n                            "
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "td",
+                            { staticClass: "border-t px-6 py-2 text-center" },
+                            [
+                              _vm._v(
+                                "\n                                " +
+                                  _vm._s(batch.students_count) +
+                                  "\n                            "
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "td",
+                            { staticClass: "border-t px-6 py-2 text-center" },
                             [
                               _c(
                                 "inertia-link",
@@ -63386,7 +63603,43 @@ var render = function() {
       {
         key: "title",
         fn: function() {
-          return [_vm._v("\n        Exam Basic Information\n    ")]
+          return [
+            _c("div", { staticClass: "flex items-center" }, [
+              _c("span", [_vm._v("Exam Basic Information")]),
+              _vm._v(" "),
+              _c(
+                "span",
+                {
+                  staticClass: "ml-2",
+                  class: [_vm.done ? "text-green-600" : "text-red-600"]
+                },
+                [
+                  _c(
+                    "svg",
+                    {
+                      staticClass: "w-6 h-6",
+                      attrs: {
+                        fill: "none",
+                        stroke: "currentColor",
+                        viewBox: "0 0 24 24",
+                        xmlns: "http://www.w3.org/2000/svg"
+                      }
+                    },
+                    [
+                      _c("path", {
+                        attrs: {
+                          "stroke-linecap": "round",
+                          "stroke-linejoin": "round",
+                          "stroke-width": "2",
+                          d: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        }
+                      })
+                    ]
+                  )
+                ]
+              )
+            ])
+          ]
         },
         proxy: true
       },
@@ -64153,12 +64406,47 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("jet-action-section", {
-    on: { submitted: _vm.updateExamSchedule },
     scopedSlots: _vm._u([
       {
         key: "title",
         fn: function() {
-          return [_vm._v("\n        Exam Schedule\n    ")]
+          return [
+            _c("div", { staticClass: "flex items-center" }, [
+              _c("span", [_vm._v("Exam Schedule")]),
+              _vm._v(" "),
+              _c(
+                "span",
+                {
+                  staticClass: "ml-2",
+                  class: [_vm.done ? "text-green-600" : "text-red-600"]
+                },
+                [
+                  _c(
+                    "svg",
+                    {
+                      staticClass: "w-6 h-6",
+                      attrs: {
+                        fill: "none",
+                        stroke: "currentColor",
+                        viewBox: "0 0 24 24",
+                        xmlns: "http://www.w3.org/2000/svg"
+                      }
+                    },
+                    [
+                      _c("path", {
+                        attrs: {
+                          "stroke-linecap": "round",
+                          "stroke-linejoin": "round",
+                          "stroke-width": "2",
+                          d: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        }
+                      })
+                    ]
+                  )
+                ]
+              )
+            ])
+          ]
         },
         proxy: true
       },
@@ -64352,7 +64640,7 @@ var render = function() {
             {
               attrs: {
                 href: _vm.route("batches.show", _vm.batch.batch_id),
-                active: _vm.$page.currentRouteName == "batches.show"
+                active: _vm.$page.currentRouteName == "exams.show"
               }
             },
             [_vm._v("\n                Batch Dashboard\n            ")]
@@ -64363,7 +64651,7 @@ var render = function() {
             {
               attrs: {
                 href: _vm.route("batches.index"),
-                active: _vm.$page.currentRouteName == "batches.index"
+                active: _vm.$page.currentRouteName == "exams.index"
               }
             },
             [_vm._v("\n                Return To All batch\n            ")]
@@ -64382,72 +64670,207 @@ var render = function() {
           [_vm._v("All Exam")]
         ),
         _vm._v(" "),
-        _c("div", { staticClass: "mt-5" }, [
-          _vm.exams.length == 0
-            ? _c(
-                "div",
-                { staticClass: "flex flex-col items-center" },
-                [
-                  _c(
-                    "p",
-                    { staticClass: "pt-6 text-xl font-semibold text-red-600" },
-                    [_vm._v("No Exam found! Create a Exam.")]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "inertia-link",
-                    {
-                      staticClass:
-                        "inline-flex mt-5 px-4 py-2 bg-gray-800 text-white font-semibold text-xs tracking-widest uppercase rounded-md hover:bg-gray-600",
-                      attrs: {
-                        href: _vm.route("exams.create", _vm.batch.batch_id)
-                      }
+        _c(
+          "div",
+          { staticClass: "mt-5" },
+          [
+            _c(
+              "div",
+              { staticClass: "mb-6 flex justify-between items-center" },
+              [
+                _c("search-filter", {
+                  staticClass: "w-full max-w-lg mr-4",
+                  on: { reset: _vm.reset },
+                  model: {
+                    value: _vm.form.search,
+                    callback: function($$v) {
+                      _vm.$set(_vm.form, "search", $$v)
                     },
-                    [_vm._v("Create new Exam")]
-                  )
-                ],
-                1
-              )
-            : _c(
-                "div",
-                _vm._l(_vm.exams, function(exam) {
-                  return _c("div", { key: exam.id }, [
+                    expression: "form.search"
+                  }
+                }),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  [
                     _c(
-                      "div",
+                      "inertia-link",
                       {
                         staticClass:
-                          "flex justify-between items-center px-4 py-2 mb-2 bg-white rounded"
+                          "btn-main px-3 py-2 text-sm font-semibold uppercase tracking-widest",
+                        attrs: {
+                          href: _vm.route("exams.create", _vm.batch.batch_id)
+                        }
                       },
                       [
-                        _c("h2", [_vm._v(_vm._s(exam.name))]),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          [
-                            _c(
-                              "inertia-link",
-                              {
-                                staticClass:
-                                  "inline-flex px-2 py-1 bg-gray-800 text-white font-semibold text-xs tracking-widest uppercase rounded-md hover:bg-gray-600",
-                                attrs: {
-                                  href: _vm.route("exams.show", [
-                                    _vm.batch.batch_id,
-                                    exam.exam_id
-                                  ])
-                                }
-                              },
-                              [_vm._v("Dashboard")]
-                            )
-                          ],
-                          1
+                        _vm._v(
+                          "\n                            Create\n                        "
                         )
                       ]
                     )
-                  ])
-                }),
-                0
-              )
-        ])
+                  ],
+                  1
+                )
+              ],
+              1
+            ),
+            _vm._v(" "),
+            _c(
+              "div",
+              { staticClass: "bg-white rounded shadow overflow-x-auto" },
+              [
+                _c(
+                  "table",
+                  { staticClass: "w-full whitespace-no-wrap" },
+                  [
+                    _c("tr", { staticClass: "text-left font-bold" }, [
+                      _c("th", { staticClass: "px-6 pt-4 pb-4" }, [
+                        _vm._v("Name")
+                      ]),
+                      _vm._v(" "),
+                      _c("th", { staticClass: "px-6 pt-4 pb-4 text-center" }, [
+                        _vm._v("Questions (s)")
+                      ]),
+                      _vm._v(" "),
+                      _c("th", { staticClass: "px-6 pt-4 pb-4 text-center" }, [
+                        _vm._v("Started At")
+                      ]),
+                      _vm._v(" "),
+                      _c("th", { staticClass: "px-6 pt-4 pb-4 text-center" }, [
+                        _vm._v("Ended At")
+                      ]),
+                      _vm._v(" "),
+                      _c("th", { staticClass: "px-6 pt-4 pb-4 text-center" }, [
+                        _vm._v("Status (s)")
+                      ]),
+                      _vm._v(" "),
+                      _c("th", { staticClass: "px-6 pt-4 pb-4 text-center" }, [
+                        _vm._v("Action")
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _vm._l(_vm.exams.data, function(exam) {
+                      return _c(
+                        "tr",
+                        {
+                          key: exam.id,
+                          staticClass:
+                            "hover:bg-gray-100 focus-within:bg-gray-100"
+                        },
+                        [
+                          _c("td", { staticClass: "border-t px-6 py-2" }, [
+                            _vm._v(
+                              "\n                                " +
+                                _vm._s(exam.name) +
+                                "\n                            "
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "td",
+                            { staticClass: "border-t px-6 py-2 text-center" },
+                            [
+                              _vm._v(
+                                "\n                                " +
+                                  _vm._s(exam.questions_count) +
+                                  " / " +
+                                  _vm._s(exam.total_question) +
+                                  "\n                            "
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "td",
+                            { staticClass: "border-t px-6 py-2 text-center" },
+                            [
+                              _vm._v(
+                                "\n                                " +
+                                  _vm._s(
+                                    exam.started_at
+                                      ? exam.started_at
+                                      : "Not Set"
+                                  ) +
+                                  "\n                            "
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "td",
+                            { staticClass: "border-t px-6 py-2 text-center" },
+                            [
+                              _vm._v(
+                                "\n                                " +
+                                  _vm._s(
+                                    exam.ended_at ? exam.ended_at : "Not Set"
+                                  ) +
+                                  "\n                            "
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "td",
+                            { staticClass: "border-t px-6 py-2 text-center" },
+                            [
+                              _vm._v(
+                                "\n                                " +
+                                  _vm._s(exam.status) +
+                                  "\n                            "
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "td",
+                            { staticClass: "border-t px-6 py-2 text-center" },
+                            [
+                              _c(
+                                "inertia-link",
+                                {
+                                  staticClass:
+                                    "inline-flex ml-2 px-2 py-1 bg-gray-800 text-white font-semibold text-xs tracking-widest uppercase rounded-md hover:bg-gray-600",
+                                  attrs: {
+                                    href: _vm.route("exams.show", [
+                                      _vm.batch.batch_id,
+                                      exam.exam_id
+                                    ])
+                                  }
+                                },
+                                [_vm._v("Dashboard")]
+                              )
+                            ],
+                            1
+                          )
+                        ]
+                      )
+                    }),
+                    _vm._v(" "),
+                    _vm.exams.data.length === 0
+                      ? _c("tr", [
+                          _c(
+                            "td",
+                            {
+                              staticClass: "border-t px-6 py-4",
+                              attrs: { colspan: "5" }
+                            },
+                            [_vm._v("No Exam (s) found.")]
+                          )
+                        ])
+                      : _vm._e()
+                  ],
+                  2
+                )
+              ]
+            ),
+            _vm._v(" "),
+            _vm.exams.data.length
+              ? _c("pagination", { attrs: { links: _vm.exams.links } })
+              : _vm._e()
+          ],
+          1
+        )
       ])
     ])
   ])
@@ -64610,298 +65033,330 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "w-full" }, [
-    _vm.showAddQuestionForm
-      ? _c("div", { staticClass: "p-5  shadow-md" }, [
-          _c(
-            "div",
-            { staticClass: "w-full" },
-            [
-              _c(
-                "div",
-                { staticClass: "flex flex-col" },
-                [
-                  _c("question-editor", {
-                    staticClass: "border-2 border-gray-600 rounded bg-white",
-                    attrs: { content: _vm.form.question },
-                    on: {
-                      input: function($event) {
-                        return _vm.inputChange($event, "question")
+  return _c(
+    "div",
+    { staticClass: "w-full" },
+    [
+      _vm.showAddQuestionForm
+        ? _c("div", { staticClass: "p-5  shadow-md" }, [
+            _c(
+              "div",
+              { staticClass: "w-full" },
+              [
+                _c(
+                  "div",
+                  { staticClass: "flex flex-col" },
+                  [
+                    _c("question-editor", {
+                      staticClass: "border-2 border-gray-600 rounded bg-white",
+                      attrs: { content: _vm.form.question },
+                      on: {
+                        input: function($event) {
+                          return _vm.inputChange($event, "question")
+                        }
                       }
+                    })
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _c("jet-input-error", {
+                  staticClass: "mt-2",
+                  attrs: { message: _vm.form.error("question") }
+                })
+              ],
+              1
+            ),
+            _vm._v(" "),
+            _c("div", { staticClass: "pl-8 py-4 space-y-4" }, [
+              _c("div", { staticClass: "flex items-center space-x-3" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.form.answer,
+                      expression: "form.answer"
                     }
-                  })
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c("jet-input-error", {
-                staticClass: "mt-2",
-                attrs: { message: _vm.form.error("question") }
-              })
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c("div", { staticClass: "pl-8 py-4 space-y-4" }, [
-            _c("div", { staticClass: "flex items-center space-x-3" }, [
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.form.answer,
-                    expression: "form.answer"
+                  ],
+                  staticClass:
+                    "form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out",
+                  attrs: { value: "a", type: "radio" },
+                  domProps: { checked: _vm._q(_vm.form.answer, "a") },
+                  on: {
+                    change: function($event) {
+                      return _vm.$set(_vm.form, "answer", "a")
+                    }
                   }
-                ],
-                staticClass:
-                  "form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out",
-                attrs: { value: "a", type: "radio" },
-                domProps: { checked: _vm._q(_vm.form.answer, "a") },
-                on: {
-                  change: function($event) {
-                    return _vm.$set(_vm.form, "answer", "a")
-                  }
-                }
-              }),
-              _vm._v(" "),
-              _c(
-                "div",
-                { staticClass: "flex-1" },
-                [
-                  _c(
-                    "div",
-                    { staticClass: "flex flex-col" },
-                    [
-                      _c("question-editor", {
-                        staticClass:
-                          "border border-gray-600 bg-white rounded-md",
-                        attrs: { content: _vm.form.option_a },
-                        on: {
-                          input: function($event) {
-                            return _vm.inputChange($event, "option_a")
+                }),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  { staticClass: "flex-1" },
+                  [
+                    _c(
+                      "div",
+                      { staticClass: "flex flex-col" },
+                      [
+                        _c("question-editor", {
+                          staticClass:
+                            "border border-gray-600 bg-white rounded-md",
+                          attrs: { content: _vm.form.option_a },
+                          on: {
+                            input: function($event) {
+                              return _vm.inputChange($event, "option_a")
+                            }
                           }
-                        }
-                      })
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c("jet-input-error", {
-                    staticClass: "mt-2",
-                    attrs: { message: _vm.form.error("option_a") }
-                  })
-                ],
-                1
-              )
+                        })
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c("jet-input-error", {
+                      staticClass: "mt-2",
+                      attrs: { message: _vm.form.error("option_a") }
+                    })
+                  ],
+                  1
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "flex items-center space-x-3" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.form.answer,
+                      expression: "form.answer"
+                    }
+                  ],
+                  staticClass:
+                    "form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out",
+                  attrs: { value: "b", type: "radio" },
+                  domProps: { checked: _vm._q(_vm.form.answer, "b") },
+                  on: {
+                    change: function($event) {
+                      return _vm.$set(_vm.form, "answer", "b")
+                    }
+                  }
+                }),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  { staticClass: "flex-1" },
+                  [
+                    _c(
+                      "div",
+                      { staticClass: "flex flex-col" },
+                      [
+                        _c("question-editor", {
+                          staticClass:
+                            "border border-gray-600 bg-white rounded-md",
+                          attrs: { content: _vm.form.option_b },
+                          on: {
+                            input: function($event) {
+                              return _vm.inputChange($event, "option_b")
+                            }
+                          }
+                        })
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c("jet-input-error", {
+                      staticClass: "mt-2",
+                      attrs: { message: _vm.form.error("option_b") }
+                    })
+                  ],
+                  1
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "flex items-center space-x-3" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.form.answer,
+                      expression: "form.answer"
+                    }
+                  ],
+                  staticClass:
+                    "form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out",
+                  attrs: { value: "c", type: "radio" },
+                  domProps: { checked: _vm._q(_vm.form.answer, "c") },
+                  on: {
+                    change: function($event) {
+                      return _vm.$set(_vm.form, "answer", "c")
+                    }
+                  }
+                }),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  { staticClass: "flex-1" },
+                  [
+                    _c(
+                      "div",
+                      { staticClass: "flex flex-col" },
+                      [
+                        _c("question-editor", {
+                          staticClass:
+                            "border border-gray-600 bg-white rounded-md",
+                          attrs: { content: _vm.form.option_c },
+                          on: {
+                            input: function($event) {
+                              return _vm.inputChange($event, "option_c")
+                            }
+                          }
+                        })
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c("jet-input-error", {
+                      staticClass: "mt-2",
+                      attrs: { message: _vm.form.error("option_c") }
+                    })
+                  ],
+                  1
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "flex items-center space-x-3" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.form.answer,
+                      expression: "form.answer"
+                    }
+                  ],
+                  staticClass:
+                    "form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out",
+                  attrs: { value: "d", type: "radio" },
+                  domProps: { checked: _vm._q(_vm.form.answer, "d") },
+                  on: {
+                    change: function($event) {
+                      return _vm.$set(_vm.form, "answer", "d")
+                    }
+                  }
+                }),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  { staticClass: "flex-1" },
+                  [
+                    _c(
+                      "div",
+                      { staticClass: "flex flex-col" },
+                      [
+                        _c("question-editor", {
+                          staticClass:
+                            "border border-gray-600 bg-white rounded-md",
+                          attrs: { content: _vm.form.option_d },
+                          on: {
+                            input: function($event) {
+                              return _vm.inputChange($event, "option_d")
+                            }
+                          }
+                        })
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c("jet-input-error", {
+                      staticClass: "mt-2",
+                      attrs: { message: _vm.form.error("option_d") }
+                    })
+                  ],
+                  1
+                )
+              ])
             ]),
             _vm._v(" "),
-            _c("div", { staticClass: "flex items-center space-x-3" }, [
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.form.answer,
-                    expression: "form.answer"
-                  }
-                ],
-                staticClass:
-                  "form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out",
-                attrs: { value: "b", type: "radio" },
-                domProps: { checked: _vm._q(_vm.form.answer, "b") },
-                on: {
-                  change: function($event) {
-                    return _vm.$set(_vm.form, "answer", "b")
-                  }
-                }
-              }),
-              _vm._v(" "),
+            _c("div", { staticClass: "mt-2" }, [
               _c(
-                "div",
-                { staticClass: "flex-1" },
-                [
-                  _c(
-                    "div",
-                    { staticClass: "flex flex-col" },
-                    [
-                      _c("question-editor", {
-                        staticClass:
-                          "border border-gray-600 bg-white rounded-md",
-                        attrs: { content: _vm.form.option_b },
-                        on: {
-                          input: function($event) {
-                            return _vm.inputChange($event, "option_b")
-                          }
-                        }
-                      })
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c("jet-input-error", {
-                    staticClass: "mt-2",
-                    attrs: { message: _vm.form.error("option_b") }
-                  })
-                ],
-                1
-              )
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "flex items-center space-x-3" }, [
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.form.answer,
-                    expression: "form.answer"
+                "button",
+                {
+                  staticClass:
+                    "inline-flex items-center px-2 py-1 bg-gray-900 text-white text-xs font-bold tracking-widest rounded hover:bg-gray-700 focus:outline-none",
+                  on: {
+                    click: function($event) {
+                      $event.preventDefault()
+                      return _vm.saveQuestion($event)
+                    }
                   }
-                ],
-                staticClass:
-                  "form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out",
-                attrs: { value: "c", type: "radio" },
-                domProps: { checked: _vm._q(_vm.form.answer, "c") },
-                on: {
-                  change: function($event) {
-                    return _vm.$set(_vm.form, "answer", "c")
-                  }
-                }
-              }),
-              _vm._v(" "),
-              _c(
-                "div",
-                { staticClass: "flex-1" },
-                [
-                  _c(
-                    "div",
-                    { staticClass: "flex flex-col" },
-                    [
-                      _c("question-editor", {
-                        staticClass:
-                          "border border-gray-600 bg-white rounded-md",
-                        attrs: { content: _vm.form.option_c },
-                        on: {
-                          input: function($event) {
-                            return _vm.inputChange($event, "option_c")
-                          }
-                        }
-                      })
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c("jet-input-error", {
-                    staticClass: "mt-2",
-                    attrs: { message: _vm.form.error("option_c") }
-                  })
-                ],
-                1
-              )
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "flex items-center space-x-3" }, [
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.form.answer,
-                    expression: "form.answer"
-                  }
-                ],
-                staticClass:
-                  "form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out",
-                attrs: { value: "d", type: "radio" },
-                domProps: { checked: _vm._q(_vm.form.answer, "d") },
-                on: {
-                  change: function($event) {
-                    return _vm.$set(_vm.form, "answer", "d")
-                  }
-                }
-              }),
-              _vm._v(" "),
-              _c(
-                "div",
-                { staticClass: "flex-1" },
-                [
-                  _c(
-                    "div",
-                    { staticClass: "flex flex-col" },
-                    [
-                      _c("question-editor", {
-                        staticClass:
-                          "border border-gray-600 bg-white rounded-md",
-                        attrs: { content: _vm.form.option_d },
-                        on: {
-                          input: function($event) {
-                            return _vm.inputChange($event, "option_d")
-                          }
-                        }
-                      })
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c("jet-input-error", {
-                    staticClass: "mt-2",
-                    attrs: { message: _vm.form.error("option_d") }
-                  })
-                ],
-                1
+                },
+                [_vm._v("Save Question")]
               )
             ])
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "mt-2" }, [
-            _c(
-              "button",
-              {
-                staticClass:
-                  "inline-flex items-center px-2 py-1 bg-gray-900 text-white text-xs font-bold tracking-widest rounded hover:bg-gray-700 focus:outline-none",
-                on: {
-                  click: function($event) {
-                    $event.preventDefault()
-                    return _vm.saveQuestion($event)
-                  }
-                }
-              },
-              [_vm._v("Save Question")]
-            )
           ])
-        ])
-      : _vm._e(),
-    _vm._v(" "),
-    _c(
-      "div",
-      { staticClass: "mt-5" },
-      [
-        !_vm.showAddQuestionForm
-          ? _c(
-              "jet-button",
-              {
-                nativeOn: {
-                  click: function($event) {
-                    _vm.showAddQuestionForm = true
-                  }
-                }
-              },
-              [_vm._v("Add Question")]
-            )
-          : _c(
-              "jet-danger-button",
-              {
-                nativeOn: {
-                  click: function($event) {
-                    return _vm.hideQuestionForm($event)
-                  }
-                }
-              },
-              [_vm._v("Cancel")]
-            )
-      ],
-      1
-    )
-  ])
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.showUploadZone
+        ? _c("question-upload-zone", {
+            attrs: { examId: _vm.examId },
+            on: {
+              "hide-question-uploadzone": function($event) {
+                _vm.showUploadZone = false
+              }
+            }
+          })
+        : _c(
+            "div",
+            { staticClass: "mt-5" },
+            [
+              !_vm.showAddQuestionForm
+                ? _c(
+                    "div",
+                    [
+                      _c(
+                        "jet-button",
+                        {
+                          nativeOn: {
+                            click: function($event) {
+                              _vm.showAddQuestionForm = true
+                            }
+                          }
+                        },
+                        [_vm._v("Add Question")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "jet-button",
+                        {
+                          nativeOn: {
+                            click: function($event) {
+                              _vm.showUploadZone = true
+                            }
+                          }
+                        },
+                        [_vm._v("Add Questions From File")]
+                      )
+                    ],
+                    1
+                  )
+                : _c(
+                    "jet-danger-button",
+                    {
+                      nativeOn: {
+                        click: function($event) {
+                          return _vm.hideQuestionForm($event)
+                        }
+                      }
+                    },
+                    [_vm._v("Cancel")]
+                  )
+            ],
+            1
+          )
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -65488,6 +65943,127 @@ var render = function() {
           1
         )
   ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Pages/Admin/Question/QuestionUploadZone.vue?vue&type=template&id=7fc37983&":
+/*!*******************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/Pages/Admin/Question/QuestionUploadZone.vue?vue&type=template&id=7fc37983& ***!
+  \*******************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    {
+      staticClass:
+        "h-56 w-ull flex flex-col justify-center items-center border-2 rounded"
+    },
+    [
+      _c("input", {
+        ref: "questions_file",
+        staticClass: "hidden",
+        attrs: { type: "file" },
+        on: { change: _vm.handleUploadedFile }
+      }),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "flex justify-center items-center space-x-1" },
+        [
+          _c(
+            "jet-button",
+            {
+              nativeOn: {
+                click: function($event) {
+                  $event.preventDefault()
+                  return _vm.selectQuestionFile($event)
+                }
+              }
+            },
+            [
+              _vm._v(
+                "\n                " +
+                  _vm._s(_vm.form.uploadFile ? "Change" : "Select A File") +
+                  "\n            "
+              )
+            ]
+          ),
+          _vm._v(" "),
+          _c(
+            "span",
+            {
+              directives: [
+                {
+                  name: "show",
+                  rawName: "v-show",
+                  value: _vm.fileName,
+                  expression: "fileName"
+                }
+              ]
+            },
+            [_vm._v(_vm._s(_vm.fileName))]
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "mt-5 flex space-x-2 justify-center items-center" },
+        [
+          _c(
+            "loading-button",
+            {
+              staticClass:
+                "btn-main px-3 py-2 text-sm font-semibold uppercase tracking-widest",
+              attrs: { loading: _vm.sending },
+              nativeOn: {
+                click: function($event) {
+                  $event.preventDefault()
+                  return _vm.uploadQuestionFile($event)
+                }
+              }
+            },
+            [_vm._v("Upload Questions")]
+          ),
+          _vm._v(" "),
+          _c(
+            "jet-danger-button",
+            {
+              nativeOn: {
+                click: function($event) {
+                  $event.preventDefault()
+                  return _vm.hideUploadZone($event)
+                }
+              }
+            },
+            [_vm._v("Cancel")]
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c("jet-input-error", {
+        staticClass: "mt-2",
+        attrs: { message: _vm.form.error("uploadFile") }
+      })
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -67797,21 +68373,10 @@ var render = function() {
                       _vm._v(" "),
                       _c("div", [
                         _c("p", [
-                          _vm._v(
-                            "Exam Start at: " +
-                              _vm._s(_vm.exam.exam_date) +
-                              " " +
-                              _vm._s(_vm.exam.exam_start)
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("p", [
-                          _vm._v(
-                            "Exam End at: " +
-                              _vm._s(_vm.exam.exam_date) +
-                              " " +
-                              _vm._s(_vm.exam.exam_end)
-                          )
+                          _vm._v("Exam End at: "),
+                          _c("span", { staticClass: "font-bold" }, [
+                            _vm._v(_vm._s(_vm.exam.ended_at))
+                          ])
                         ])
                       ]),
                       _vm._v(" "),
@@ -68723,7 +69288,10 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "button",
-    { staticClass: "flex items-center", attrs: { disabled: _vm.loading } },
+    {
+      staticClass: "inline-flex items-center",
+      attrs: { disabled: _vm.loading }
+    },
     [
       _vm.loading ? _c("div", { staticClass: "btn-spinner mr-2" }) : _vm._e(),
       _vm._v(" "),
@@ -83406,6 +83974,8 @@ var map = {
 	"./Admin/Question/Index.vue": "./resources/js/Pages/Admin/Question/Index.vue",
 	"./Admin/Question/Question": "./resources/js/Pages/Admin/Question/Question.vue",
 	"./Admin/Question/Question.vue": "./resources/js/Pages/Admin/Question/Question.vue",
+	"./Admin/Question/QuestionUploadZone": "./resources/js/Pages/Admin/Question/QuestionUploadZone.vue",
+	"./Admin/Question/QuestionUploadZone.vue": "./resources/js/Pages/Admin/Question/QuestionUploadZone.vue",
 	"./Admin/Result/Index": "./resources/js/Pages/Admin/Result/Index.vue",
 	"./Admin/Result/Index.vue": "./resources/js/Pages/Admin/Result/Index.vue",
 	"./Admin/Result/Show": "./resources/js/Pages/Admin/Result/Show.vue",
@@ -84906,6 +85476,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Question_vue_vue_type_template_id_0aecb7d4___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Question_vue_vue_type_template_id_0aecb7d4___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/Pages/Admin/Question/QuestionUploadZone.vue":
+/*!******************************************************************!*\
+  !*** ./resources/js/Pages/Admin/Question/QuestionUploadZone.vue ***!
+  \******************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _QuestionUploadZone_vue_vue_type_template_id_7fc37983___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./QuestionUploadZone.vue?vue&type=template&id=7fc37983& */ "./resources/js/Pages/Admin/Question/QuestionUploadZone.vue?vue&type=template&id=7fc37983&");
+/* harmony import */ var _QuestionUploadZone_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./QuestionUploadZone.vue?vue&type=script&lang=js& */ "./resources/js/Pages/Admin/Question/QuestionUploadZone.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _QuestionUploadZone_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _QuestionUploadZone_vue_vue_type_template_id_7fc37983___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _QuestionUploadZone_vue_vue_type_template_id_7fc37983___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/Pages/Admin/Question/QuestionUploadZone.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/Pages/Admin/Question/QuestionUploadZone.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************************!*\
+  !*** ./resources/js/Pages/Admin/Question/QuestionUploadZone.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_QuestionUploadZone_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib??vue-loader-options!./QuestionUploadZone.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Pages/Admin/Question/QuestionUploadZone.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_QuestionUploadZone_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/Pages/Admin/Question/QuestionUploadZone.vue?vue&type=template&id=7fc37983&":
+/*!*************************************************************************************************!*\
+  !*** ./resources/js/Pages/Admin/Question/QuestionUploadZone.vue?vue&type=template&id=7fc37983& ***!
+  \*************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_QuestionUploadZone_vue_vue_type_template_id_7fc37983___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib??vue-loader-options!./QuestionUploadZone.vue?vue&type=template&id=7fc37983& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Pages/Admin/Question/QuestionUploadZone.vue?vue&type=template&id=7fc37983&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_QuestionUploadZone_vue_vue_type_template_id_7fc37983___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_QuestionUploadZone_vue_vue_type_template_id_7fc37983___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

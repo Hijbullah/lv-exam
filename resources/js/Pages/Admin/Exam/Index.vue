@@ -18,14 +18,14 @@
 
                  <app-nav-link 
                     :href="route('batches.show', batch.batch_id)" 
-                    :active="$page.currentRouteName == 'batches.show'"
+                    :active="$page.currentRouteName == 'exams.show'"
                 >
                     Batch Dashboard
                 </app-nav-link>
 
                 <app-nav-link 
                     :href="route('batches.index')" 
-                    :active="$page.currentRouteName == 'batches.index'"
+                    :active="$page.currentRouteName == 'exams.index'"
                 >
                     Return To All batch
                 </app-nav-link>
@@ -34,21 +34,56 @@
             <div class="flex-1 px-5">
                 <h2 class="text-xl text-gray-900 font-semibold border-b-2 border-gray-900">All Exam</h2>
                 <div class="mt-5">
-                     <div v-if="exams.length == 0" class="flex flex-col items-center">
-                        <p class="pt-6 text-xl font-semibold text-red-600">No Exam found! Create a Exam.</p>
-                        <inertia-link :href="route('exams.create', batch.batch_id)" class="inline-flex mt-5 px-4 py-2 bg-gray-800 text-white font-semibold text-xs tracking-widest uppercase rounded-md hover:bg-gray-600">Create new Exam</inertia-link>
-
-                    </div>
-                    <div v-else>
-                        <div v-for="exam in exams" :key="exam.id">
-                            <div class="flex justify-between items-center px-4 py-2 mb-2 bg-white rounded">
-                                <h2>{{ exam.name }}</h2>
-                                <div>
-                                    <inertia-link :href="route('exams.show', [batch.batch_id, exam.exam_id])" class="inline-flex px-2 py-1 bg-gray-800 text-white font-semibold text-xs tracking-widest uppercase rounded-md hover:bg-gray-600">Dashboard</inertia-link>
-                                </div>
-                            </div>
+                    <div class="mb-6 flex justify-between items-center">
+                        <search-filter v-model="form.search" class="w-full max-w-lg mr-4" @reset="reset"></search-filter>
+                        <div>
+                            <inertia-link 
+                                :href="route('exams.create', batch.batch_id)" 
+                                class="btn-main px-3 py-2 text-sm font-semibold uppercase tracking-widest"
+                            >
+                                Create
+                            </inertia-link>
                         </div>
                     </div>
+
+                    <div class="bg-white rounded shadow overflow-x-auto">
+                        <table class="w-full whitespace-no-wrap">
+                            <tr class="text-left font-bold">
+                                <th class="px-6 pt-4 pb-4">Name</th>
+                                <th class="px-6 pt-4 pb-4 text-center">Questions (s)</th>
+                                <th class="px-6 pt-4 pb-4 text-center">Started At</th>
+                                <th class="px-6 pt-4 pb-4 text-center">Ended At</th>
+                                <th class="px-6 pt-4 pb-4 text-center">Status (s)</th>
+                                
+                                <th class="px-6 pt-4 pb-4 text-center">Action</th>
+                            </tr>
+                            <tr v-for="exam in exams.data" :key="exam.id" class="hover:bg-gray-100 focus-within:bg-gray-100">
+                                <td class="border-t px-6 py-2">
+                                    {{ exam.name }}
+                                </td>
+                                <td class="border-t px-6 py-2 text-center">
+                                    {{ exam.questions_count }} / {{ exam.total_question }}
+                                </td>
+                                <td class="border-t px-6 py-2 text-center">
+                                    {{ exam.started_at ? exam.started_at : 'Not Set' }}
+                                </td>
+                                <td class="border-t px-6 py-2 text-center">
+                                    {{ exam.ended_at ? exam.ended_at : 'Not Set' }}
+                                </td>
+                                <td class="border-t px-6 py-2 text-center">
+                                    {{ exam.status }}
+                                </td>
+                                <td class="border-t px-6 py-2 text-center">
+                                    <inertia-link :href="route('exams.show', [batch.batch_id, exam.exam_id])" class="inline-flex ml-2 px-2 py-1 bg-gray-800 text-white font-semibold text-xs tracking-widest uppercase rounded-md hover:bg-gray-600">Dashboard</inertia-link>
+                                </td>
+                            </tr>
+                            <tr v-if="exams.data.length === 0">
+                                <td class="border-t px-6 py-4" colspan="5">No Exam (s) found.</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <pagination v-if="exams.data.length" :links="exams.links" />
                 </div>
             </div>
         </div>
@@ -58,12 +93,42 @@
 <script>
     import AdminLayout from '@/Layouts/AdminLayout'
     import AppNavLink from '@/component/NavLink'
+    import Pagination from '@/Shared/Pagination'
+    import SearchFilter from '@/Shared/SearchFilter'
 
     export default {
         components: {
             AdminLayout,
-            AppNavLink
+            AppNavLink,
+            Pagination,
+            SearchFilter
         },
-        props: ['exams', 'batch']
+         props: {
+            batch: Object,
+            exams: Object,
+            filters: Object
+        },
+        data() {
+            return {
+                form: {
+                    search: this.filters.search,
+                }
+            }
+        },
+        watch: {
+            form: {
+                handler: _.throttle(function() {
+                    let query = _.pickBy(this.form);
+                    query.batch = this.batch.batch_id;
+                    this.$inertia.replace(route('exams.index', Object.keys(query).length ? query : { remember: 'forget' }))
+                }, 150),
+                deep: true,
+            },
+        },
+        methods: {
+            reset() {
+                this.form = _.mapValues(this.form, () => null)
+            },
+        }
     }
 </script>

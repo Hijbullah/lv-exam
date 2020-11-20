@@ -6,15 +6,12 @@ use App\Models\Exam;
 use Inertia\Inertia;
 use App\Models\Question;
 use Illuminate\Http\Request;
+use App\Imports\QuestionsImport;
 use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
 
 class QuestionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Exam $exam)
     {
         return Inertia::render('Admin/Question/Index', [
@@ -34,12 +31,6 @@ class QuestionController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request, Exam $exam)
     {
         $data = $request->validateWithBag('createQuestion', [
@@ -55,13 +46,16 @@ class QuestionController extends Controller
         return back();
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Question  $question
-     * @return \Illuminate\Http\Response
-     */
+    public function uploadQuestionsFile(Request $request, Exam $exam)
+    {
+        $request->validateWithBag('uploadQuestionFile', [
+            'uploadFile' => ['required', 'mimes:csv,xlsx,xls']
+        ]);
+
+        Excel::import(new QuestionsImport($exam->id), $request->file('uploadFile'));
+        return back();
+    }
+
     public function update(Request $request, Question $question)
     {
         $request->validateWithBag('updateQuestion', [
@@ -83,12 +77,6 @@ class QuestionController extends Controller
         return back();
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Question  $question
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Question $question)
     {
         $question->delete();

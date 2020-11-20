@@ -15,16 +15,27 @@ use Illuminate\Validation\ValidationException;
 
 class ExamController extends Controller
 {
-    public function index(Batch $batch)
+    public function index(Request $request, Batch $batch)
     {
         return Inertia::render('Admin/Exam/Index', [
-            'exams' => Exam::whereBatchId($batch->id)->latest()->get()->map(function ($exam) {
-                return [
-                    'id' => $exam->id,
-                    'exam_id' => $exam->exam_id,
-                    'name' => $exam->name,
-                ];
-            }),
+            'filters' => $request->all('search'),
+            'exams' => Exam::whereBatchId($batch->id)
+                ->filter($request->only('search'))
+                ->withCount('questions')
+                ->latest()
+                ->paginate(10)
+                ->transform(function ($exam) {
+                    return [
+                        'id' => $exam->id,
+                        'exam_id' => $exam->exam_id,
+                        'name' => $exam->name,
+                        'status' => ucfirst($exam->status),
+                        'questions_count' => $exam->questions_count,
+                        'total_question' => $exam->total_question,
+                        'started_at' => $exam->started_at ? $exam->started_at->format('d/m/Y h:i A') : '',
+                        'ended_at' => $exam->ended_at ? $exam->ended_at->format('d/m/Y h:i A') : '',
+                    ];
+                }),
             'batch' => $batch->only('batch_id', 'name')
         ]);
     }
@@ -61,12 +72,14 @@ class ExamController extends Controller
                 'exam_type' => $exam->exam_type,
                 'name' => $exam->name,
                 'total_question' => $exam->total_question,
+                'questions_count' => $exam->questions_count,
                 'pass_mark' => $exam->pass_mark,
                 'duration' => $exam->duration,
                 'has_negetive_mark' => $exam->has_negetive_mark,
                 'negetive_mark' => $exam->negetive_mark,
-                'started_at' => $exam->started_at ? $exam->started_at->format('Y-m-d\TH:i') : now()->format('Y-m-d\TH:i'),
-                'ended_at' => $exam->ended_at ? $exam->ended_at->format('Y-m-d\TH:i') : now()->format('Y-m-d\TH:i'),
+                'started_at' => $exam->started_at ? $exam->started_at->format('Y-m-d\TH:i') : null,
+                'ended_at' => $exam->ended_at ? $exam->ended_at->format('Y-m-d\TH:i') : null,
+                'status' => $exam->status,
                 'created_at' => now()->format('Y-m-d\TH:i')
             ],
             'batch' => $batch->only('id', 'batch_id', 'name')

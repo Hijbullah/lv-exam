@@ -1,7 +1,12 @@
 <template>
     <jet-form-section @submitted="updateBasicInfo">
         <template #title>
-            Exam Basic Information
+            <div class="flex items-center">
+                <span>Exam Basic Information</span>    
+                <span class="ml-2" :class="[done ? 'text-green-600' : 'text-red-600']">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>   
+                </span>
+            </div>
         </template>
 
         <template #description>
@@ -85,6 +90,12 @@
                     bag: 'updateExamBasicInfo',
                     resetOnSuccess: false
                 })
+            }
+        },
+
+        computed: {
+            done() {
+                return this.exam.total_question && this.exam.pass_mark && this.exam.duration;
             }
         },
 

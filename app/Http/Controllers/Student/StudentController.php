@@ -55,13 +55,11 @@ class StudentController extends Controller
     {
         $exam = Exam::whereBatchId(Auth::user()->batch_id)
                 ->whereStatus('published')
-                // ->whereExamDate(Carbon::now()->format('Y-m-d'))
-                // ->whereTime('exam_start', '<=', Carbon::now()->format('H:i:s'))
-                // ->whereTime('exam_end', '>=', Carbon::now()->format('H:i:s'))
+                ->where('started_at', '<=', Carbon::now())
+                ->where('ended_at', '>=', Carbon::now())
                 ->latest()
-                ->first(['id', 'exam_id', 'name', 'exam_type', 'started_at', 'ended_at']);
-        
-
+                ->get(['id', 'exam_id', 'name', 'exam_type', 'started_at', 'ended_at']);
+        return $exam;
         return Inertia::render('Student/Exam/ExamCenter', [
             'exam' => function() use ($exam) {
                 if(!$exam) {
@@ -73,9 +71,8 @@ class StudentController extends Controller
                     'exam_id' => $exam->exam_id,
                     'exam_type' => $exam->exam_type,
                     'name' => $exam->name,
-                    'exam_date' => Carbon::create($exam->exam_date)->format('d/m/Y'),
-                    'exam_start' => Carbon::create($exam->exam_start)->format('g:i a'),
-                    'exam_end' => Carbon::create($exam->exam_end)->format('g:i a'),
+                    'started_at' => $exam->started_at->format('d/m/Y h:i A'),
+                    'ended_at' => $exam->ended_at->format('j F\\, Y h:i A'),
                 ];
             }
         ]);

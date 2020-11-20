@@ -50,8 +50,17 @@
                 <button @click.prevent="saveQuestion" class="inline-flex items-center px-2 py-1 bg-gray-900 text-white text-xs font-bold tracking-widest rounded hover:bg-gray-700 focus:outline-none">Save Question</button>
             </div>
         </div>
-        <div class="mt-5">
-            <jet-button v-if="!showAddQuestionForm" @click.native="showAddQuestionForm = true">Add Question</jet-button>
+
+        <question-upload-zone
+            v-if="showUploadZone"
+            :examId="examId" 
+            @hide-question-uploadzone="showUploadZone = false"
+        />
+        <div v-else class="mt-5">
+            <div v-if="!showAddQuestionForm">
+                <jet-button  @click.native="showAddQuestionForm = true">Add Question</jet-button>
+                <jet-button @click.native="showUploadZone = true">Add Questions From File</jet-button>
+            </div>
             <jet-danger-button v-else @click.native="hideQuestionForm">Cancel</jet-danger-button>
         </div>
     </div>
@@ -62,14 +71,15 @@
     import JetInputError from '@/Jetstream/InputError'
     import JetButton from '@/Jetstream/Button'
     import JetDangerButton from '@/Jetstream/DangerButton'
+    import QuestionUploadZone from './QuestionUploadZone'
 
     export default {
         components: {
             QuestionEditor,
             JetInputError,
             JetButton,
-            JetDangerButton
-            
+            JetDangerButton,
+            QuestionUploadZone  
         },
 
         props: ['examId'],
@@ -77,6 +87,7 @@
         data() {
             return {
                 showAddQuestionForm: false,
+                showUploadZone: false,
 
                 form: this.$inertia.form({
                     question: '<p><strong>Question</strong></p>',
@@ -112,7 +123,7 @@
             },
             inputChange(event, property) {
                 this.form[property] = event;
-            }
+            },
         }
     }
 </script>

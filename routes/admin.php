@@ -79,8 +79,10 @@ Route::middleware(['auth:admin', 'verified'])->group(function() {
     // questions
     Route::get('/exams/{exam:exam_id}/questions', [QuestionController::class, 'index'])->name('questions.index');
     Route::post('/exams/{exam:exam_id}/questions', [QuestionController::class, 'store'])->name('questions.store');
+    Route::post('/exams/{exam:exam_id}/questions-upload-with-file', [QuestionController::class, 'uploadQuestionsFile'])->name('questions.upload-questions-file');
     Route::put('/questions/{question}', [QuestionController::class, 'update'])->name('questions.update');
     Route::delete('/questions/{question}', [QuestionController::class, 'destroy'])->name('questions.destroy');
+
 
 
 });
