@@ -58,8 +58,8 @@ class StudentController extends Controller
                 ->where('started_at', '<=', Carbon::now())
                 ->where('ended_at', '>=', Carbon::now())
                 ->latest()
-                ->get(['id', 'exam_id', 'name', 'exam_type', 'started_at', 'ended_at']);
-        return $exam;
+                ->first(['id', 'exam_id', 'name', 'exam_type', 'started_at', 'ended_at']);
+        
         return Inertia::render('Student/Exam/ExamCenter', [
             'exam' => function() use ($exam) {
                 if(!$exam) {
@@ -189,7 +189,9 @@ class StudentController extends Controller
                 'total_question' => $result->total_question,
                 'correct_answer' => $result->correct_answer,
                 'wrong_answer' => $result->wrong_answer,
-                'total_mark' => $result->total_mark
+                'total_mark' => $result->total_mark,
+                'position' => $result->position,
+                'is_published' => $result->is_published
             ]
         ]);
     }

@@ -21,6 +21,10 @@
                             <jet-nav-link :href="route('batches.index')" :active="$page.currentRouteName == 'batches.index'">
                                 Batch
                             </jet-nav-link>
+
+                            <jet-nav-link :href="route('batches.index')" :active="$page.currentRouteName == 'batches.index'">
+                                Site Setting
+                            </jet-nav-link>
                         </div>
                     </div>
 

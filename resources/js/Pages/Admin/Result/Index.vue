@@ -47,7 +47,7 @@
                                     {{ result.position ? result.position : 'not published yet'}}
                                 </td>
                                 <td class="border-t px-6 py-2">
-                                     <inertia-link 
+                                    <inertia-link 
                                         :href="route('results.show', result.result_id)" 
                                         class="inline-flex items-center px-2 py-1 bg-gray-900 text-white text-xs uppercase tracking-widest rounded hover:bg-gray-700 focus:outline-none"
                                     >

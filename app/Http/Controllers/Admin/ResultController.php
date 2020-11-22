@@ -55,7 +55,7 @@ class ResultController extends Controller
                         $position += 1;
                     }
 
-                    $result->update(['position' => $position]);
+                    $result->update(['position' => $position, 'is_published' => true]);
                 }
             });
         return back();

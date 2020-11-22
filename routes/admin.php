@@ -45,6 +45,9 @@ Route::middleware(['auth:admin', 'verified'])->group(function() {
         return Inertia\Inertia::render('Admin/Dashboard');
     })->name('admin.dashboard');
 
+    // setting
+    Route::get('/settings', []);
+
     // batch
     Route::get('/batches', [BatchController::class, 'index'])->name('batches.index');
     Route::get('/batches/create', [BatchController::class, 'create'])->name('batches.create');
@@ -82,9 +85,6 @@ Route::middleware(['auth:admin', 'verified'])->group(function() {
     Route::post('/exams/{exam:exam_id}/questions-upload-with-file', [QuestionController::class, 'uploadQuestionsFile'])->name('questions.upload-questions-file');
     Route::put('/questions/{question}', [QuestionController::class, 'update'])->name('questions.update');
     Route::delete('/questions/{question}', [QuestionController::class, 'destroy'])->name('questions.destroy');
-
-
-
 });
 
 
