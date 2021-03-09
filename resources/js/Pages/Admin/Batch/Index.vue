@@ -68,6 +68,8 @@
     </admin-layout>
 </template>
 
+
+
 <script>
     import AdminLayout from '@/Layouts/AdminLayout'
     import AppNavLink from '@/component/NavLink'

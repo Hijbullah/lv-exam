@@ -31,6 +31,8 @@ class BatchController extends Controller
                     ];
                 })
         ]);
+
+        
     }
 
     /**

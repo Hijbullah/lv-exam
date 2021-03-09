@@ -13,7 +13,7 @@ class ResultController extends Controller
     public function index(Exam $exam)
     {
         return  Inertia::render('Admin/Result/Index', [
-            'filters' => \ Request::all('search'),
+            'filters' => \Request::all('search'),
             'batch' => $exam->batch->only('id', 'batch_id', 'name'),
             'exam' => $exam->only('id', 'exam_id', 'name'),
             'results' => $exam->results()
